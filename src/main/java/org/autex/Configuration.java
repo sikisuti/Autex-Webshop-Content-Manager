@@ -1,13 +1,9 @@
 package org.autex;
 
-import org.autex.controller.NotificationController;
-
 import java.io.File;
 import java.io.FileInputStream;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Properties;
 
 public class Configuration {
@@ -15,11 +11,9 @@ public class Configuration {
 
     private Configuration() {
         properties = new Properties();
-        URL url = Thread.currentThread().getContextClassLoader().getResource("configuration.properties");
-        try (FileInputStream fis = new FileInputStream(new File(url.toURI()))) {
+        try (FileInputStream fis = new FileInputStream(new File("configuration.properties"))) {
             properties.load(fis);
-        } catch (Exception e) {
-            NotificationController.notify("Konfiguráció betöltése sikertelen");
+        } catch (Exception ignored) {
         }
     }
 
