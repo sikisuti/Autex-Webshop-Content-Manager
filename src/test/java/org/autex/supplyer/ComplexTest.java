@@ -1,12 +1,12 @@
 package org.autex.supplyer;
 
 import org.autex.TestParent;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 
 public class ComplexTest extends TestParent {
     Complex complex;
@@ -22,9 +22,8 @@ public class ComplexTest extends TestParent {
         File inventorySource = loadFile("Complex/KBSklt0508.xlsx");
         try (FileInputStream fsAllItems = new FileInputStream(allItemsSource);
             FileInputStream fsInventory = new FileInputStream(inventorySource)) {
-            LOGGER.info(complex.convert(fsAllItems, fsInventory).toString());
-        } catch (IOException ioException) {
-            ioException.printStackTrace();
+            String actual = complex.convert(fsAllItems, fsInventory).toString();
+            Assert.assertEquals(loadFileString("Complex/expected/complex-expected.csv"), actual);
         }
     }
 }

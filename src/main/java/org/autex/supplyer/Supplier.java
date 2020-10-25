@@ -22,7 +22,7 @@ public abstract class Supplier {
 
     private StringWriter stringify(List<String[]> content) throws IOException {
         try (StringWriter stringWriter = new StringWriter();
-             CSVWriter csvWriter = new CSVWriter(stringWriter)) {
+             CSVWriter csvWriter = new CSVWriter(stringWriter, ',', '"', '"', "\r\n")) {
             csvWriter.writeAll(content, false);
             return stringWriter;
         }
