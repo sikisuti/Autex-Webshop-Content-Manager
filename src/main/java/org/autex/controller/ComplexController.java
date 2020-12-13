@@ -44,14 +44,14 @@ public class ComplexController extends SupplierController {
     }
 
     @Override
-    public Writer convert() {
+    public void convert() {
         if (allItemsSourceFile == null || inventorySourceFile == null) {
             throw new GeneralException("Válassz forrásfájl(oka)t!");
         }
 
         try (InputStream is = new FileInputStream(allItemsSourceFile);
             InputStream isInv = new FileInputStream(inventorySourceFile)) {
-            return supplier.convert(is, isInv);
+            openResultView(supplier.convert(is, isInv));
         } catch (IOException e) {
             throw new GeneralException("Fájl betöltés sikertelen.");
         }

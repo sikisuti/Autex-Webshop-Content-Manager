@@ -27,9 +27,9 @@ public class AutexController extends SupplierController {
     }
 
     @Override
-    public Writer convert() {
+    public void convert() {
         try (InputStream is = new FileInputStream(sourceFile)) {
-            return supplier.convert(is);
+            supplier.convert(is);
         } catch (IOException e) {
             throw new GeneralException("Fájl betöltés sikertelen.");
         }
