@@ -51,7 +51,8 @@ public class ComplexController extends SupplierController {
 
         try (InputStream is = new FileInputStream(allItemsSourceFile);
             InputStream isInv = new FileInputStream(inventorySourceFile)) {
-            openResultView(supplier.convert(is, isInv));
+            supplier.convert(is, isInv);
+            openResultView(supplier);
         } catch (IOException e) {
             throw new GeneralException("Fájl betöltés sikertelen.");
         }

@@ -1,8 +1,6 @@
 package org.autex.supplyer;
 
 import com.opencsv.CSVWriter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,10 +10,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Supplier {
-    protected static final Logger LOGGER = LoggerFactory.getLogger(Supplier.class);
+    private List<String[]> tabularData;
 
-    public Writer convert(InputStream... inputStream) throws IOException {
-        return stringify(build(inputStream));
+    public List<String[]> getTabularData() {
+        return tabularData;
+    }
+
+    public Writer getCSV() throws IOException {
+        return stringify(tabularData);
+    }
+
+    public void convert(InputStream... inputStream) throws IOException {
+        tabularData = build(inputStream);
     }
 
     protected abstract List<String[]> build(InputStream... inputStream) throws IOException;

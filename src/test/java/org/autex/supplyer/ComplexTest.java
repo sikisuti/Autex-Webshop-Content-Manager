@@ -22,7 +22,8 @@ public class ComplexTest extends TestParent {
         File inventorySource = loadFile("Complex/KBSklt0508.xlsx");
         try (FileInputStream fsAllItems = new FileInputStream(allItemsSource);
             FileInputStream fsInventory = new FileInputStream(inventorySource)) {
-            String actual = complex.convert(fsAllItems, fsInventory).toString();
+            complex.convert(fsAllItems, fsInventory);
+            String actual = complex.getCSV().toString();
             Assert.assertEquals(loadFileString("Complex/expected/complex-expected.csv"), actual);
         }
     }

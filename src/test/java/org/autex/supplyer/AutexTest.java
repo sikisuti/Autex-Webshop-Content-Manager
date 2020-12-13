@@ -22,7 +22,8 @@ public class AutexTest extends TestParent {
     public void testConvert() throws Exception {
         File source = loadFile("Autex/Autex-export.xls");
         try (FileInputStream fis = new FileInputStream(source)) {
-            String acutal = autex.convert(fis).toString();
+            autex.convert(fis);
+            String acutal = autex.getCSV().toString();
             Assert.assertEquals(loadFileString("Autex/expected/autex-expected.csv"), acutal);
         }
     }
