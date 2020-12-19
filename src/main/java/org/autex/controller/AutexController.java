@@ -1,37 +1,43 @@
 package org.autex.controller;
 
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.stage.FileChooser;
 import org.autex.exception.GeneralException;
-import org.autex.supplyer.Autex;
+import org.autex.supplyer.AutexTask;
 
 import java.io.*;
+import java.util.List;
 
 public class AutexController extends SupplierController {
     @FXML private Label lbSourcePath;
 
     FileChooser fileChooser;
-    File sourceFile;
+    File cobraFile;
 
     public AutexController() {
-        supplier = new Autex();
         fileChooser = new FileChooser();
         fileChooser.setTitle("Válassz fájlt");
         fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Excel files", "*.xls", "*.xlsx"), new FileChooser.ExtensionFilter("All Files", "*.*"));
     }
 
     public void selectFile() {
-        sourceFile = fileChooser.showOpenDialog(lbSourcePath.getScene().getWindow());
-        lbSourcePath.setText(sourceFile.getAbsolutePath());
+        cobraFile = fileChooser.showOpenDialog(lbSourcePath.getScene().getWindow());
+        lbSourcePath.setText(cobraFile.getAbsolutePath());
     }
 
-    @Override
+    /*@Override
     public void convert() {
-        try (InputStream is = new FileInputStream(sourceFile)) {
-            supplier.convert(is);
+        try (InputStream is = new FileInputStream(cobraFile)) {
+            conversionTask.convert(is);
         } catch (IOException e) {
             throw new GeneralException("Fájl betöltés sikertelen.");
         }
+    }*/
+
+    @Override
+    public Task<List<String[]>> getConversionTask() {
+        return new AutexTask(cobraFile);
     }
 }

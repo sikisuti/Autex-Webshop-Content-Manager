@@ -12,13 +12,13 @@
 <BorderPane prefWidth="500" fx:id="rootPane" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.autex.controller.MainViewController">
    <top>
       <HBox style="-fx-padding: 10;" spacing="10">
-            <ComboBox fx:id="cmbSupplierPicker" promptText="Válassz beszállítót..." onAction="#supplyerSelected">
-               <items>
+            <ComboBox fx:id="cmbSupplierPicker" promptText="Válassz beszállítót..." onAction="#updateSupplierView">
+               <!--<items>
                   <FXCollections fx:factory="observableArrayList">
                      <String fx:value="Autex"/>
                      <String fx:value="Complex"/>
                   </FXCollections>
-               </items>
+               </items>-->
             </ComboBox>
       </HBox>
    </top>
@@ -30,7 +30,7 @@
          <padding>
             <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
          </padding>
-         <Button text="Frissít" onAction="#update"/>
+         <Button text="Frissít" onAction="#openResultView"/>
       </VBox>
    </right>
 </BorderPane>

@@ -1,6 +1,7 @@
 package org.autex.supplyer;
 
 import com.opencsv.CSVWriter;
+import javafx.concurrent.Task;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,7 +10,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Supplier {
+public abstract class SupplierTask extends Task<List<String[]>> {
     private List<String[]> tabularData;
 
     public List<String[]> getTabularData() {
@@ -20,11 +21,11 @@ public abstract class Supplier {
         return stringify(tabularData);
     }
 
-    public void convert(InputStream... inputStream) throws IOException {
-        tabularData = build(inputStream);
-    }
+//    public void convert(InputStream... inputStream) throws IOException {
+//        tabularData = build(inputStream);
+//    }
 
-    protected abstract List<String[]> build(InputStream... inputStream) throws IOException;
+//    protected abstract List<String[]> build(InputStream... inputStream) throws IOException;
 
     private StringWriter stringify(List<String[]> content) throws IOException {
         try (StringWriter stringWriter = new StringWriter();

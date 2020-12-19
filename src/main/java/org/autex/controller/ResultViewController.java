@@ -2,6 +2,7 @@ package org.autex.controller;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -13,6 +14,10 @@ import java.util.Map;
 
 public class ResultViewController {
     @FXML TableView tvResults;
+
+    public void generateCSV(Task<List<String[]>> task) {
+
+    }
 
     public void setResult(List<String[]> tabularData) {
         setHeaders(tabularData.get(0));

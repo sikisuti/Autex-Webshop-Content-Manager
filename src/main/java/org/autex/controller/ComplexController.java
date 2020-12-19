@@ -1,5 +1,6 @@
 package org.autex.controller;
 
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -7,9 +8,10 @@ import javafx.scene.control.Label;
 import javafx.stage.FileChooser;
 import org.autex.Configuration;
 import org.autex.exception.GeneralException;
-import org.autex.supplyer.Complex;
+import org.autex.supplyer.ComplexTask;
 
 import java.io.*;
+import java.util.List;
 
 public class ComplexController extends SupplierController {
     @FXML public Label lbAllItemsPath;
@@ -17,11 +19,10 @@ public class ComplexController extends SupplierController {
 
     FileChooser fileChooser;
 
-    File allItemsSourceFile;
-    File inventorySourceFile;
+    File masterDataFile;
+    File stockFile;
 
     public ComplexController() {
-        supplier = new Complex();
         fileChooser = new FileChooser();
         File initDir = new File(Configuration.getInstance().getProperty("defaultPath"));
         if (initDir.exists()) {
@@ -34,27 +35,32 @@ public class ComplexController extends SupplierController {
     public void selectFile(ActionEvent e) {
         if (((Node) e.getSource()).getId().equals("btnAllItems")) {
             fileChooser.setTitle("Válassz cikktörzs fájlt");
-            allItemsSourceFile = fileChooser.showOpenDialog(lbAllItemsPath.getScene().getWindow());
-            lbAllItemsPath.setText(allItemsSourceFile.getAbsolutePath());
+            masterDataFile = fileChooser.showOpenDialog(lbAllItemsPath.getScene().getWindow());
+            lbAllItemsPath.setText(masterDataFile.getAbsolutePath());
         } else {
             fileChooser.setTitle("Válassz készlet fájlt");
-            inventorySourceFile = fileChooser.showOpenDialog(lbAllItemsPath.getScene().getWindow());
-            lbInventoryPath.setText(inventorySourceFile.getAbsolutePath());
+            stockFile = fileChooser.showOpenDialog(lbAllItemsPath.getScene().getWindow());
+            lbInventoryPath.setText(stockFile.getAbsolutePath());
         }
     }
 
-    @Override
+    /*@Override
     public void convert() {
-        if (allItemsSourceFile == null || inventorySourceFile == null) {
+        if (masterDataFile == null || stockFile == null) {
             throw new GeneralException("Válassz forrásfájl(oka)t!");
         }
 
-        try (InputStream is = new FileInputStream(allItemsSourceFile);
-            InputStream isInv = new FileInputStream(inventorySourceFile)) {
-            supplier.convert(is, isInv);
-            openResultView(supplier);
+        try (InputStream is = new FileInputStream(masterDataFile);
+             InputStream isInv = new FileInputStream(stockFile)) {
+            conversionTask.convert(is, isInv);
+            openResultView(conversionTask);
         } catch (IOException e) {
             throw new GeneralException("Fájl betöltés sikertelen.");
         }
+    }*/
+
+    @Override
+    public Task<List<String[]>> getConversionTask() {
+        return new ComplexTask(masterDataFile, stockFile);
     }
 }
