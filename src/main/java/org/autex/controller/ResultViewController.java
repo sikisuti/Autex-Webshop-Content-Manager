@@ -4,24 +4,38 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.MapValueFactory;
+import javafx.scene.layout.Region;
+import javafx.stage.FileChooser;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class ResultViewController {
+    @FXML Region veil;
+    @FXML ProgressIndicator progressIndicator;
     @FXML TableView tvResults;
+    List<String[]> rawData;
 
-    public void generateCSV(Task<List<String[]>> task) {
-
+    public void convert(Task<List<String[]>> task) {
+        veil.visibleProperty().bind(task.runningProperty());
+        progressIndicator.visibleProperty().bind(task.runningProperty());
+        progressIndicator.progressProperty().bind(task.progressProperty());
+        task.valueProperty().addListener((observableValue, strings, t1) -> {
+            rawData = observableValue.getValue();
+            renderData();
+        });
+        new Thread(task).start();
     }
 
-    public void setResult(List<String[]> tabularData) {
-        setHeaders(tabularData.get(0));
-        fillTable(tabularData);
+    public void renderData() {
+        setHeaders(rawData.get(0));
+        fillTable(rawData);
     }
 
     private void setHeaders(String[] headers) {
@@ -45,5 +59,18 @@ public class ResultViewController {
         }
 
         tvResults.getItems().addAll(items);
+    }
+
+    @FXML
+    private void save() {
+        FileChooser fileChooser = new FileChooser();
+        File file = fileChooser.showSaveDialog(tvResults.getScene().getWindow());
+        if (file != null) {
+            generateAndSaveCSV();
+        }
+    }
+
+    private void generateAndSaveCSV() {
+
     }
 }

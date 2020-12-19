@@ -7,5 +7,12 @@
 <?import javafx.scene.layout.*?>
 
 <AnchorPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="org.autex.controller.ResultViewController">
-    <TableView maxWidth="800" fx:id="tvResults"/>
+    <StackPane>
+        <VBox>
+            <TableView prefWidth="800" fx:id="tvResults"/>
+            <Button fx:id="btnSave" text="mentés" onAction="#save"/>
+        </VBox>
+        <Region fx:id="veil" style="-fx-background-color: rgba(0, 0, 0, 0.4)"/>
+        <ProgressIndicator fx:id="progressIndicator"/>
+    </StackPane>
 </AnchorPane>

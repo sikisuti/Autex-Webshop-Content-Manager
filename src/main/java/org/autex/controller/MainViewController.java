@@ -39,7 +39,7 @@ public class MainViewController {
         stage.setTitle("Generált csv");
         stage.setScene(new Scene(loader.load()));
         ResultViewController resultViewController = loader.getController();
-        resultViewController.generateCSV(cmbSupplierPicker.getValue().controller.getConversionTask());
+        resultViewController.convert(cmbSupplierPicker.getValue().controller.getConversionTask());
         stage.show();
 
         /*try {

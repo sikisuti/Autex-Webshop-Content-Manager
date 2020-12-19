@@ -18,13 +18,34 @@ public class ComplexTask extends SupplierTask {
         this.stockFile = stockFile;
     }
 
-    /*@Override
-    protected List<String[]> build(InputStream... inputStream) throws IOException {
-        Map<String, XSSFRow> allItems = loadAllItems(inputStream[0]);
-        return mergeItems(allItems, inputStream[1]);
-    }*/
+    @Override
+    protected List<String[]> call() throws Exception {
+            return mergeMasterDataWithStock(loadMasterData());
+    }
 
-    private List<String[]> mergeItems(Map<String, XSSFRow> allItems) throws IOException {
+    private Map<String, XSSFRow> loadMasterData() throws IOException {
+        Map<String, XSSFRow> itemList = new HashMap<>();
+
+        try (InputStream masterDataStream = new FileInputStream(masterDataFile)) {
+            XSSFWorkbook wb = new XSSFWorkbook(masterDataStream);
+            DataFormatter df = new DataFormatter();
+            XSSFSheet sheet = wb.getSheetAt(0);
+            for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
+                XSSFRow row = sheet.getRow(rowIndex);
+                XSSFCell firstCell = row.getCell(1);
+                String id = df.formatCellValue(firstCell);
+                if (firstCell == null) {
+                    break;
+                }
+
+                itemList.put(id, row);
+            }
+        }
+
+        return itemList;
+    }
+
+    private List<String[]> mergeMasterDataWithStock(Map<String, XSSFRow> masterData) throws IOException {
         try (InputStream stockStream = new FileInputStream(stockFile)) {
             List<String[]> content = getTemplate();
             XSSFWorkbook wb = new XSSFWorkbook(stockStream);
@@ -38,7 +59,7 @@ public class ComplexTask extends SupplierTask {
                     break;
                 }
 
-                XSSFRow rowFromAllItems = allItems.get(id);
+                XSSFRow rowFromAllItems = masterData.get(id);
                 if (rowFromAllItems != null) {
                     String[] csvRow = getRowTemplate(content.get(0).length);
                     Optional.ofNullable(rowFromAllItems.getCell(0)).ifPresent(cell -> csvRow[2] = df.formatCellValue(cell));
@@ -52,34 +73,6 @@ public class ComplexTask extends SupplierTask {
             }
 
             return content;
-        }
-    }
-
-    private Map<String, XSSFRow> loadAllItems(InputStream inputStream) throws IOException {
-        Map<String, XSSFRow> itemList = new HashMap<>();
-
-        XSSFWorkbook wb = new XSSFWorkbook(inputStream);
-        DataFormatter df = new DataFormatter();
-        XSSFSheet sheet = wb.getSheetAt(0);
-        for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
-            XSSFRow row = sheet.getRow(rowIndex);
-            XSSFCell firstCell = row.getCell(1);
-            String id = df.formatCellValue(firstCell);
-            if (firstCell == null) {
-                break;
-            }
-
-            itemList.put(id, row);
-        }
-
-        return itemList;
-    }
-
-    @Override
-    protected List<String[]> call() throws Exception {
-        try (InputStream masterDataStream = new FileInputStream(masterDataFile)) {
-            Map<String, XSSFRow> allItems = loadAllItems(masterDataStream);
-            return mergeItems(allItems);
         }
     }
 }
