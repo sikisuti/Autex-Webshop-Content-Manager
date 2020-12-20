@@ -1,30 +1,25 @@
 package org.autex.controller;
 
 import com.opencsv.CSVWriter;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.Scene;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.MapValueFactory;
 import javafx.scene.layout.Region;
 import javafx.stage.FileChooser;
+import org.autex.model.Product;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.ResourceBundle;
 
 public class ResultViewController {
     @FXML Region veil;
@@ -32,7 +27,7 @@ public class ResultViewController {
     @FXML TableView tvResults;
     List<String[]> rawData;
 
-    public void convert(Task<List<String[]>> task) {
+    public void convert(Task<ObservableList<Product>> task) {
         veil.visibleProperty().bind(task.runningProperty());
         progressIndicator.visibleProperty().bind(task.runningProperty());
         progressIndicator.progressProperty().bind(task.progressProperty());

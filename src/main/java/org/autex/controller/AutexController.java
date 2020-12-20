@@ -1,16 +1,18 @@
 package org.autex.controller;
 
+import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.stage.FileChooser;
 import org.autex.exception.GeneralException;
+import org.autex.model.Product;
 import org.autex.supplyer.AutexTask;
 
 import java.io.*;
 import java.util.List;
 
-public class AutexController extends SupplierController {
+public class AutexController implements SupplierController {
     @FXML private Label lbSourcePath;
 
     FileChooser fileChooser;
@@ -27,17 +29,8 @@ public class AutexController extends SupplierController {
         lbSourcePath.setText(cobraFile.getAbsolutePath());
     }
 
-    /*@Override
-    public void convert() {
-        try (InputStream is = new FileInputStream(cobraFile)) {
-            conversionTask.convert(is);
-        } catch (IOException e) {
-            throw new GeneralException("Fájl betöltés sikertelen.");
-        }
-    }*/
-
     @Override
-    public Task<List<String[]>> getConversionTask() {
+    public Task<ObservableList<Product>> getConversionTask() {
         return new AutexTask(cobraFile);
     }
 }

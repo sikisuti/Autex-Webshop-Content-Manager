@@ -1,5 +1,6 @@
 package org.autex.controller;
 
+import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -7,13 +8,12 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.stage.FileChooser;
 import org.autex.Configuration;
-import org.autex.exception.GeneralException;
+import org.autex.model.Product;
 import org.autex.supplyer.ComplexTask;
 
 import java.io.*;
-import java.util.List;
 
-public class ComplexController extends SupplierController {
+public class ComplexController implements SupplierController {
     @FXML public Label lbAllItemsPath;
     @FXML public Label lbInventoryPath;
 
@@ -44,23 +44,8 @@ public class ComplexController extends SupplierController {
         }
     }
 
-    /*@Override
-    public void convert() {
-        if (masterDataFile == null || stockFile == null) {
-            throw new GeneralException("Válassz forrásfájl(oka)t!");
-        }
-
-        try (InputStream is = new FileInputStream(masterDataFile);
-             InputStream isInv = new FileInputStream(stockFile)) {
-            conversionTask.convert(is, isInv);
-            openResultView(conversionTask);
-        } catch (IOException e) {
-            throw new GeneralException("Fájl betöltés sikertelen.");
-        }
-    }*/
-
     @Override
-    public Task<List<String[]>> getConversionTask() {
+    public Task<ObservableList<Product>> getConversionTask() {
         return new ComplexTask(masterDataFile, stockFile);
     }
 }

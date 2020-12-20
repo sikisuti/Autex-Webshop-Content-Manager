@@ -1,15 +1,9 @@
 package org.autex.controller;
 
+import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
-import org.autex.App;
-import org.autex.supplyer.SupplierTask;
+import org.autex.model.Product;
 
-import java.io.IOException;
-import java.util.List;
-
-public abstract class SupplierController {
-    public abstract Task<List<String[]>> getConversionTask();
+public interface SupplierController {
+    Task<ObservableList<Product>> getConversionTask();
 }

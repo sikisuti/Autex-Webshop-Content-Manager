@@ -6,10 +6,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.xssf.usermodel.*;
+import org.autex.model.MetaData;
+import org.autex.model.Product;
 
-public class ComplexTask extends SupplierTask {
+public class ComplexTask extends Task<ObservableList<Product>> {
     private final File masterDataFile;
     private final File stockFile;
 
@@ -19,7 +24,7 @@ public class ComplexTask extends SupplierTask {
     }
 
     @Override
-    protected List<String[]> call() throws Exception {
+    protected ObservableList<Product> call() throws Exception {
             return mergeMasterDataWithStock(loadMasterData());
     }
 
@@ -45,9 +50,9 @@ public class ComplexTask extends SupplierTask {
         return itemList;
     }
 
-    private List<String[]> mergeMasterDataWithStock(Map<String, XSSFRow> masterData) throws IOException {
+    private ObservableList<Product> mergeMasterDataWithStock(Map<String, XSSFRow> masterData) throws IOException {
         try (InputStream stockStream = new FileInputStream(stockFile)) {
-            List<String[]> content = getTemplate();
+            ObservableList<Product> content = FXCollections.observableArrayList();
             XSSFWorkbook wb = new XSSFWorkbook(stockStream);
             DataFormatter df = new DataFormatter();
             XSSFSheet sheet = wb.getSheetAt(0);
@@ -61,14 +66,19 @@ public class ComplexTask extends SupplierTask {
 
                 XSSFRow rowFromAllItems = masterData.get(id);
                 if (rowFromAllItems != null) {
-                    String[] csvRow = getRowTemplate(content.get(0).length);
-                    Optional.ofNullable(rowFromAllItems.getCell(0)).ifPresent(cell -> csvRow[2] = df.formatCellValue(cell));
-                    csvRow[3] = id;
-                    Optional.ofNullable(rowFromAllItems.getCell(4)).ifPresent(cell -> csvRow[25] = df.formatCellValue(cell));
-                    Optional.ofNullable(row.getCell(1)).ifPresent(cell -> csvRow[47] = df.formatCellValue(cell));
-                    Optional.ofNullable(row.getCell(3)).ifPresent(cell -> csvRow[14] = df.formatCellValue(cell));
+                    Product product = new Product();
+                    Optional.ofNullable(rowFromAllItems.getCell(0)).ifPresent(cell -> product.setSku(df.formatCellValue(cell)));
+                    product.setName(id);
+                    Optional.ofNullable(rowFromAllItems.getCell(4)).ifPresent(cell -> product.setPrice(df.formatCellValue(cell)));
+                    Optional.ofNullable(row.getCell(1)).ifPresent(cell -> {
+                        MetaData metaData = new MetaData();
+                        product.getMeta_data().add(metaData);
+                        metaData.setKey("_brand");
+                        metaData.setValue(df.formatCellValue(cell));
+                    });
+                    Optional.ofNullable(row.getCell(3)).ifPresent(cell -> product.setStock_quantity(Integer.parseInt(df.formatCellValue(cell))));
 
-                    content.add(csvRow);
+                    content.add(product);
                 }
             }
 
