@@ -1,9 +1,14 @@
 package org.autex.controller;
 
+import com.opencsv.CSVWriter;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -12,9 +17,14 @@ import javafx.scene.layout.Region;
 import javafx.stage.FileChooser;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 public class ResultViewController {
     @FXML Region veil;
@@ -62,15 +72,25 @@ public class ResultViewController {
     }
 
     @FXML
-    private void save() {
+    private void save() throws IOException {
         FileChooser fileChooser = new FileChooser();
         File file = fileChooser.showSaveDialog(tvResults.getScene().getWindow());
         if (file != null) {
-            generateAndSaveCSV();
+            generateAndSaveCSV(file);
         }
     }
 
-    private void generateAndSaveCSV() {
+    private void generateAndSaveCSV(File file) throws IOException {
+        try (FileWriter fileWriter = new FileWriter(file)) {
+            fileWriter.write(stringify(rawData));
+        }
+    }
 
+    private String stringify(List<String[]> content) throws IOException {
+        try (StringWriter stringWriter = new StringWriter();
+             CSVWriter csvWriter = new CSVWriter(stringWriter, ',', '"', '"', "\r\n")) {
+            csvWriter.writeAll(content, false);
+            return stringWriter.toString();
+        }
     }
 }

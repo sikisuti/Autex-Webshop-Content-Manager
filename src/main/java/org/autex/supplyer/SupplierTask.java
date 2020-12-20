@@ -11,29 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class SupplierTask extends Task<List<String[]>> {
-    private List<String[]> tabularData;
-
-    public List<String[]> getTabularData() {
-        return tabularData;
-    }
-
-    public Writer getCSV() throws IOException {
-        return stringify(tabularData);
-    }
-
-//    public void convert(InputStream... inputStream) throws IOException {
-//        tabularData = build(inputStream);
-//    }
-
-//    protected abstract List<String[]> build(InputStream... inputStream) throws IOException;
-
-    private StringWriter stringify(List<String[]> content) throws IOException {
-        try (StringWriter stringWriter = new StringWriter();
-             CSVWriter csvWriter = new CSVWriter(stringWriter, ',', '"', '"', "\r\n")) {
-            csvWriter.writeAll(content, false);
-            return stringWriter;
-        }
-    }
 
     protected List<String[]> getTemplate() {
         List<String[]> template = new ArrayList<>();

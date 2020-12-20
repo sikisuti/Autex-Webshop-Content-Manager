@@ -41,12 +41,6 @@ public class MainViewController {
         ResultViewController resultViewController = loader.getController();
         resultViewController.convert(cmbSupplierPicker.getValue().controller.getConversionTask());
         stage.show();
-
-        /*try {
-            suppliers.get(cmbSupplierPicker.getValue()).controller.convert();
-        } catch (Exception e) {
-            NotificationController.notify(e.getMessage());
-        }*/
     }
 
     @FXML
