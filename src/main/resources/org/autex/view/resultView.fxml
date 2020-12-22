@@ -6,9 +6,34 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<StackPane prefWidth="1200" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="org.autex.controller.ResultViewController">
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<StackPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="org.autex.controller.ResultViewController">
     <VBox>
-        <TableView fx:id="tvResults" VBox.vgrow="ALWAYS"/>
+        <TableView fx:id="tvResults" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="colSku" text="Cikkszám">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="sku"/>
+                    </cellValueFactory>
+                </TableColumn>
+                <TableColumn fx:id="colName" text="Név">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="name"/>
+                    </cellValueFactory>
+                </TableColumn>
+                <TableColumn fx:id="colPrice" text="Ár">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="price"/>
+                    </cellValueFactory>
+                </TableColumn>
+                <TableColumn fx:id="colQuantity" text="Készlet">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="stock_quantity"/>
+                    </cellValueFactory>
+                </TableColumn>
+                <TableColumn fx:id="colBrand" text="Márka"/>
+            </columns>
+        </TableView>
         <HBox style="-fx-padding: 10 10 10 10;">
             <Pane HBox.hgrow="ALWAYS"/>
             <Button fx:id="btnSave"  text="mentés" onAction="#save"/>

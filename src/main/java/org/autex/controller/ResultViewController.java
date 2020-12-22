@@ -1,69 +1,48 @@
 package org.autex.controller;
 
 import com.opencsv.CSVWriter;
-import javafx.collections.FXCollections;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.cell.MapValueFactory;
 import javafx.scene.layout.Region;
 import javafx.stage.FileChooser;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.util.AreaReference;
+import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.xssf.usermodel.*;
+import org.autex.model.MetaData;
 import org.autex.model.Product;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTable;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableColumn;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableColumns;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.util.HashMap;
+import java.io.*;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 
 public class ResultViewController {
     @FXML Region veil;
     @FXML ProgressIndicator progressIndicator;
-    @FXML TableView tvResults;
-    List<String[]> rawData;
+    @FXML TableView<Product> tvResults;
+    @FXML TableColumn<Product, String> colBrand;
 
     public void convert(Task<ObservableList<Product>> task) {
         veil.visibleProperty().bind(task.runningProperty());
         progressIndicator.visibleProperty().bind(task.runningProperty());
         progressIndicator.progressProperty().bind(task.progressProperty());
-        task.valueProperty().addListener((observableValue, strings, t1) -> {
-            rawData = observableValue.getValue();
-            renderData();
+        tvResults.itemsProperty().bind(task.valueProperty());
+        colBrand.setCellValueFactory(productStringCellDataFeatures -> {
+            Product product = productStringCellDataFeatures.getValue();
+            Optional<MetaData> metaDataBrand = product.getMeta_data().stream().filter(metaData -> metaData.getKey().equals("_brand")).findFirst();
+            return metaDataBrand.map(metaData -> new SimpleStringProperty(metaData.getValue())).orElse(null);
+
         });
+
         new Thread(task).start();
-    }
-
-    public void renderData() {
-        setHeaders(rawData.get(0));
-        fillTable(rawData);
-    }
-
-    private void setHeaders(String[] headers) {
-        for (String header : headers) {
-            TableColumn<Map, String> col = new TableColumn<>(header);
-            col.setCellValueFactory(new MapValueFactory<>(header));
-            tvResults.getColumns().add(col);
-        }
-    }
-
-    private void fillTable(List<String[]> tabularData) {
-        ObservableList<Map<String, String>> items = FXCollections.observableArrayList();
-        for (int rowIndex = 1; rowIndex < tabularData.size(); rowIndex++) {
-            String[] csvRow = tabularData.get(rowIndex);
-            Map<String, String> tableRow = new HashMap<>();
-            for (int columnIndex = 0; columnIndex < csvRow.length; columnIndex++) {
-                tableRow.put(tabularData.get(0)[columnIndex], csvRow[columnIndex]);
-            }
-
-            items.add(tableRow);
-        }
-
-        tvResults.getItems().addAll(items);
     }
 
     @FXML
@@ -71,13 +50,48 @@ public class ResultViewController {
         FileChooser fileChooser = new FileChooser();
         File file = fileChooser.showSaveDialog(tvResults.getScene().getWindow());
         if (file != null) {
-            generateAndSaveCSV(file);
+            saveAsExcel(file);
         }
     }
 
-    private void generateAndSaveCSV(File file) throws IOException {
-        try (FileWriter fileWriter = new FileWriter(file)) {
-            fileWriter.write(stringify(rawData));
+    private void saveAsExcel(File file) throws IOException {
+        // TODO:
+        tvResults.getItems();
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet("data");
+            Row rowHeader = sheet.createRow(0);
+            rowHeader.createCell(0).setCellValue("Cikkszám");
+            rowHeader.createCell(1).setCellValue("Név");
+            Row rowData = sheet.createRow(1);
+            rowData.createCell(0).setCellValue("ABC");
+            rowData.createCell(1).setCellValue("Valami");
+            CellReference topLeft = new CellReference(sheet.getRow(0).getCell(0));
+            CellReference bottomRight = new CellReference(sheet.getRow(1).getCell(1));
+            AreaReference tableArea = wb.getCreationHelper().createAreaReference(topLeft, bottomRight);
+            XSSFTable table = sheet.createTable(tableArea);
+            table.setDisplayName("Table1");
+            CTTable ctTable = table.getCTTable();
+            ctTable.addNewTableStyleInfo();
+            XSSFTableStyleInfo style = (XSSFTableStyleInfo)table.getStyle();
+            style.setName("TableStyleMedium2");
+            style.setShowColumnStripes(false);
+            style.setShowRowStripes(true);
+            ctTable.addNewAutoFilter().setRef(tableArea.formatAsString());
+//            ctTable.setId(1);
+//            ctTable.setName("data_table");
+//            ctTable.setRef("A1:B2");
+//            CTTableColumns columns = ctTable.addNewTableColumns();
+//            columns.setCount(2);
+//            CTTableColumn col1 = columns.addNewTableColumn();
+//            col1.setId(1);
+//            col1.setName("sku");
+//            CTTableColumn col2 = columns.addNewTableColumn();
+//            col2.setId(2);
+//            col1.setName("name");
+
+            try (FileOutputStream fileWriter = new FileOutputStream(file)) {
+                wb.write(fileWriter);
+            }
         }
     }
 
