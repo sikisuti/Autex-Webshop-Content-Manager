@@ -2,6 +2,7 @@ package org.autex.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class Product {
     private Long id;
@@ -66,5 +67,10 @@ public class Product {
 
     public void setMeta_data(List<MetaData> meta_data) {
         this.meta_data = meta_data;
+    }
+
+    public String getBrand() {
+        Optional<MetaData> metaDataBrand = getMeta_data().stream().filter(metaData -> metaData.getKey().equals("_brand")).findFirst();
+        return metaDataBrand.map(MetaData::getValue).orElse(null);
     }
 }

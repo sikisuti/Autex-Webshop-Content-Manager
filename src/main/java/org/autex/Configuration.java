@@ -8,11 +8,18 @@ import java.util.Properties;
 
 public class Configuration {
     private final Properties properties;
+    private final Properties credentials;
 
     private Configuration() {
         properties = new Properties();
         try (FileInputStream fis = new FileInputStream(new File("configuration.properties"))) {
             properties.load(fis);
+        } catch (Exception ignored) {
+        }
+
+        credentials = new Properties();
+        try (FileInputStream fis = new FileInputStream(new File("credentials.properties"))) {
+            credentials.load(fis);
         } catch (Exception ignored) {
         }
     }
@@ -24,6 +31,9 @@ public class Configuration {
 
     public String getProperty(String name) {
         return properties.getProperty(name);
+    }
+    public String getCredentialsProperty(String name) {
+        return credentials.getProperty(name);
     }
 
     public Map<String, String> getProperties() {

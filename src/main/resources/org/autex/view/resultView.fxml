@@ -1,44 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.control.cell.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<?import javafx.scene.control.cell.PropertyValueFactory?>
-<StackPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="org.autex.controller.ResultViewController">
+<StackPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.autex.controller.ResultViewController">
     <VBox>
         <TableView fx:id="tvResults" VBox.vgrow="ALWAYS">
             <columns>
                 <TableColumn fx:id="colSku" text="Cikkszám">
                     <cellValueFactory>
-                        <PropertyValueFactory property="sku"/>
+                        <PropertyValueFactory property="sku" />
                     </cellValueFactory>
                 </TableColumn>
                 <TableColumn fx:id="colName" text="Név">
                     <cellValueFactory>
-                        <PropertyValueFactory property="name"/>
+                        <PropertyValueFactory property="name" />
                     </cellValueFactory>
                 </TableColumn>
                 <TableColumn fx:id="colPrice" text="Ár">
                     <cellValueFactory>
-                        <PropertyValueFactory property="price"/>
+                        <PropertyValueFactory property="price" />
                     </cellValueFactory>
                 </TableColumn>
                 <TableColumn fx:id="colQuantity" text="Készlet">
                     <cellValueFactory>
-                        <PropertyValueFactory property="stock_quantity"/>
+                        <PropertyValueFactory property="stock_quantity" />
                     </cellValueFactory>
                 </TableColumn>
-                <TableColumn fx:id="colBrand" text="Márka"/>
+                <TableColumn fx:id="colBrand" text="Márka">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="brand" />
+                    </cellValueFactory>
+                </TableColumn>
             </columns>
         </TableView>
         <HBox style="-fx-padding: 10 10 10 10;">
-            <Pane HBox.hgrow="ALWAYS"/>
-            <Button fx:id="btnSave"  text="mentés" onAction="#save"/>
+            <Pane HBox.hgrow="ALWAYS" />
+            <Button fx:id="btnSave" onAction="#save" text="mentés" />
         </HBox>
     </VBox>
-    <Region fx:id="veil" style="-fx-background-color: rgba(0, 0, 0, 0.4)"/>
-    <ProgressIndicator fx:id="progressIndicator"/>
+    <StackPane fx:id="busyVeil" StackPane.alignment="CENTER">
+        <Region style="-fx-background-color: rgba(0, 0, 0, 0.4)" />
+        <VBox alignment="CENTER" StackPane.alignment="CENTER">
+            <ProgressIndicator fx:id="progressIndicator" style="-fx-min-width: 100; -fx-min-height: 100;" VBox.vgrow="ALWAYS" />
+            <Label fx:id="lbProgressMessage">
+                <font>
+                   <Font name="System Bold" size="18.0" />
+                </font>
+            </Label>
+        </VBox>
+    </StackPane>
 </StackPane>
