@@ -6,7 +6,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TableView;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 import org.apache.poi.ss.usermodel.Row;
@@ -14,16 +13,17 @@ import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.*;
 import org.autex.model.Product;
+import org.autex.supplyer.SyncTask;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTable;
 
 import java.io.*;
 
 public class ResultViewController {
-//    @FXML Region veil;
     @FXML StackPane busyVeil;
     @FXML ProgressIndicator progressIndicator;
     @FXML Label lbProgressMessage;
     @FXML TableView<Product> tvResults;
+    String supplyerName;
 
     public void convert(Task<ObservableList<Product>> task) {
         busyVeil.visibleProperty().bind(task.runningProperty());
@@ -31,6 +31,7 @@ public class ResultViewController {
         progressIndicator.progressProperty().bind(task.progressProperty());
         lbProgressMessage.textProperty().bind(task.titleProperty());
         tvResults.itemsProperty().bind(task.valueProperty());
+        supplyerName = task.getClass().getName();
         new Thread(task).start();
     }
 
@@ -43,10 +44,21 @@ public class ResultViewController {
         }
     }
 
+    @FXML
+    private void sync() {
+        SyncTask task = new SyncTask(tvResults.getItems());
+        busyVeil.visibleProperty().bind(task.runningProperty());
+        progressIndicator.visibleProperty().bind(task.runningProperty());
+        progressIndicator.progressProperty().bind(task.progressProperty());
+        lbProgressMessage.textProperty().bind(task.titleProperty());
+        tvResults.itemsProperty().bind(task.valueProperty());
+        new Thread(task).start();
+    }
+
     private void saveAsExcel(File file) throws IOException {
         ObservableList<Product> products = tvResults.getItems();
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
-            XSSFSheet sheet = wb.createSheet("data");
+            XSSFSheet sheet = wb.createSheet(supplyerName);
             Row rowHeader = sheet.createRow(0);
             rowHeader.createCell(0).setCellValue("Cikkszám");
             rowHeader.createCell(1).setCellValue("Név");

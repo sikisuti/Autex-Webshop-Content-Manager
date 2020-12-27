@@ -32,6 +32,9 @@ public class Configuration {
     public String getProperty(String name) {
         return properties.getProperty(name);
     }
+    public Integer getIntegerProperty(String name) {
+        return Integer.parseInt(properties.getProperty(name));
+    }
     public String getCredentialsProperty(String name) {
         return credentials.getProperty(name);
     }

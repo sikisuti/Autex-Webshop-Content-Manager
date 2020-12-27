@@ -5,5 +5,5 @@
 
 <GridPane style="-fx-padding: 10;" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="org.autex.controller.AutexController">
     <Button text="Cobra tábla..." onAction="#selectFile"/>
-    <Label GridPane.columnIndex="1" fx:id="lbSourcePath" text="location"/>
+    <Label GridPane.columnIndex="1" fx:id="lbSourcePath"/>
 </GridPane>

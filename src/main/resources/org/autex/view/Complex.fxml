@@ -7,8 +7,8 @@
 <?import javafx.scene.layout.*?>
 
 <GridPane style="-fx-padding: 10;" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="org.autex.controller.ComplexController">
-    <Button fx:id="btnAllItems" text="Cikktörzs..." onAction="#selectFile"/>
+    <Button fx:id="btnAllItems" text="Cikktörzs..." minWidth="100" onAction="#selectFile"/>
     <Label GridPane.columnIndex="1" fx:id="lbAllItemsPath"/>
-    <Button fx:id="btnInventory" GridPane.rowIndex="1" text="Készlet..." onAction="#selectFile"/>
+    <Button fx:id="btnInventory" GridPane.rowIndex="1" text="Készlet..." minWidth="100" onAction="#selectFile"/>
     <Label GridPane.rowIndex="1" GridPane.columnIndex="1" fx:id="lbInventoryPath"/>
 </GridPane>

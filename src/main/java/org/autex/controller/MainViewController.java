@@ -21,6 +21,7 @@ public class MainViewController {
     @FXML
     public void initialize() throws IOException {
         ObservableList<SupplyerDTO> suppliers = FXCollections.observableArrayList(
+                loadFXML("File"),
                 loadFXML("Autex"),
                 loadFXML("Complex")
         );
@@ -46,6 +47,11 @@ public class MainViewController {
     @FXML
     private void updateSupplierView(ActionEvent event) {
         rootPane.setCenter(cmbSupplierPicker.getValue().view);
+    }
+
+    @FXML
+    private void openFile() {
+
     }
 
     private static class SupplyerDTO {

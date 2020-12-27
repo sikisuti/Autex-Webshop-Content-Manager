@@ -1,0 +1,174 @@
+[
+  {
+    "id": 23911,
+    "name": "09067/195",
+    "slug": "autex-09067-195",
+    "permalink": "https://autex.hu/termek/csapagy/gordulo/gordulo-gorgos/gordulo-gorgos-kupgorgos/gordulo-gorgos-kupgorgos-egysoros/autex-09067-195/",
+    "date_created": "2020-05-29T08:25:02",
+    "date_created_gmt": "2020-05-29T08:25:02",
+    "date_modified": "2020-10-28T13:42:10",
+    "date_modified_gmt": "2020-10-28T13:42:10",
+    "type": "simple",
+    "status": "publish",
+    "featured": false,
+    "catalog_visibility": "visible",
+    "description": "",
+    "short_description": "",
+    "sku": "KBS09067/195",
+    "price": "808.5",
+    "regular_price": "808.5",
+    "sale_price": "",
+    "date_on_sale_from": null,
+    "date_on_sale_from_gmt": null,
+    "date_on_sale_to": null,
+    "date_on_sale_to_gmt": null,
+    "price_html": "<span class=\"woocommerce-Price-amount amount\">809&nbsp;<span class=\"woocommerce-Price-currencySymbol\">&#70;&#116;</span></span>",
+    "on_sale": false,
+    "purchasable": true,
+    "total_sales": 0,
+    "virtual": false,
+    "downloadable": false,
+    "downloads": [],
+    "download_limit": -1,
+    "download_expiry": -1,
+    "external_url": "",
+    "button_text": "",
+    "tax_status": "taxable",
+    "tax_class": "",
+    "manage_stock": true,
+    "stock_quantity": 40,
+    "stock_status": "instock",
+    "backorders": "no",
+    "backorders_allowed": false,
+    "backordered": false,
+    "sold_individually": false,
+    "weight": "",
+    "dimensions": {
+      "length": "",
+      "width": "14.29",
+      "height": ""
+    },
+    "shipping_required": true,
+    "shipping_taxable": true,
+    "shipping_class": "",
+    "shipping_class_id": 0,
+    "reviews_allowed": true,
+    "average_rating": "0.00",
+    "rating_count": 0,
+    "related_ids": [
+      4158,
+      4166,
+      4165,
+      4162,
+      4173
+    ],
+    "upsell_ids": [],
+    "cross_sell_ids": [],
+    "parent_id": 0,
+    "purchase_note": "",
+    "categories": [
+      {
+        "id": 58,
+        "name": "CSAPÁGY",
+        "slug": "csapagy"
+      },
+      {
+        "id": 718,
+        "name": "Egysoros",
+        "slug": "gordulo-gorgos-kupgorgos-egysoros"
+      },
+      {
+        "id": 715,
+        "name": "Gördülő",
+        "slug": "gordulo"
+      },
+      {
+        "id": 716,
+        "name": "Görgős",
+        "slug": "gordulo-gorgos"
+      },
+      {
+        "id": 717,
+        "name": "Kúpgörgős",
+        "slug": "gordulo-gorgos-kupgorgos"
+      }
+    ],
+    "tags": [],
+    "images": [],
+    "attributes": [],
+    "default_attributes": [],
+    "variations": [],
+    "grouped_products": [],
+    "menu_order": 0,
+    "meta_data": [
+      {
+        "id": 740247,
+        "key": "_measurement_1",
+        "value": "19.05"
+      },
+      {
+        "id": 740248,
+        "key": "_measurement_2",
+        "value": "49.23"
+      },
+      {
+        "id": 740249,
+        "key": "_measurement_3",
+        "value": "14.29"
+      },
+      {
+        "id": 740250,
+        "key": "_inner_diameter",
+        "value": "19.05"
+      },
+      {
+        "id": 740251,
+        "key": "_outer_diameter",
+        "value": "49.23"
+      },
+      {
+        "id": 740252,
+        "key": "_width_2",
+        "value": "19.05"
+      },
+      {
+        "id": 740255,
+        "key": "_brand",
+        "value": "KBS"
+      },
+      {
+        "id": 740256,
+        "key": "_gws_es_metas",
+        "value": {
+          "measurement_1": 19.05,
+          "measurement_2": 49.23,
+          "measurement_3": 14.29,
+          "inner_diameter": 19.05,
+          "outer_diameter": 49.23,
+          "width": 14.29,
+          "width_2": 19.05,
+          "netweight": null,
+          "grossweight": null,
+          "brand": "KBS"
+        }
+      },
+      {
+        "id": 740257,
+        "key": "_suppliername",
+        "value": "EXOR"
+      }
+    ],
+    "_links": {
+      "self": [
+        {
+          "href": "https://autex.hu/wp-json/wc/v3/products/23911"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://autex.hu/wp-json/wc/v3/products"
+        }
+      ]
+    }
+  }
+]

@@ -9,6 +9,11 @@
     <VBox>
         <TableView fx:id="tvResults" VBox.vgrow="ALWAYS">
             <columns>
+                <TableColumn fx:id="colId" text="Azonosító">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="id" />
+                    </cellValueFactory>
+                </TableColumn>
                 <TableColumn fx:id="colSku" text="Cikkszám">
                     <cellValueFactory>
                         <PropertyValueFactory property="sku" />
@@ -29,6 +34,11 @@
                         <PropertyValueFactory property="stock_quantity" />
                     </cellValueFactory>
                 </TableColumn>
+                <TableColumn fx:id="colWeight" text="Súly">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="weight" />
+                    </cellValueFactory>
+                </TableColumn>
                 <TableColumn fx:id="colBrand" text="Márka">
                     <cellValueFactory>
                         <PropertyValueFactory property="brand" />
@@ -38,7 +48,8 @@
         </TableView>
         <HBox style="-fx-padding: 10 10 10 10;">
             <Pane HBox.hgrow="ALWAYS" />
-            <Button fx:id="btnSave" onAction="#save" text="mentés" />
+            <Button onAction="#save" text="mentés" />
+            <Button onAction="#sync" text="szinkronizálás" />
         </HBox>
     </VBox>
     <StackPane fx:id="busyVeil" StackPane.alignment="CENTER">
