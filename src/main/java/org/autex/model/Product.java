@@ -1,5 +1,10 @@
 package org.autex.model;
 
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -7,14 +12,27 @@ import java.util.Optional;
 public class Product {
     private Long id;
     private String sku;
-    private String name;
+    private StringProperty name = new SimpleStringProperty();
     private String price;
     private Integer stock_quantity;
     private String weight;
     private List<MetaData> meta_data = new ArrayList<>();
+    public ObjectProperty<Status> status = new SimpleObjectProperty<>(Status.UNKNOWN);
 
     public Long getId() {
         return id;
+    }
+
+    public String getName() {
+        return name.get();
+    }
+
+    public void setName(String name) {
+        this.name.set(name);
+    }
+
+    public StringProperty nameProperty() {
+        return name;
     }
 
     public void setId(Long id) {
@@ -27,14 +45,6 @@ public class Product {
 
     public void setSku(String sku) {
         this.sku = sku;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getPrice() {
@@ -72,5 +82,35 @@ public class Product {
     public String getBrand() {
         Optional<MetaData> metaDataBrand = getMeta_data().stream().filter(metaData -> metaData.getKey().equals("_brand")).findFirst();
         return metaDataBrand.map(MetaData::getValue).orElse(null);
+    }
+
+    public Status getStatus() {
+        return status.get();
+    }
+
+    public void setStatus(Status status) {
+        this.status.set(status);
+    }
+
+    public ObjectProperty<Status> statusProperty() {
+        return status;
+    }
+
+    public enum Status {
+        UNKNOWN("Ismeretlen"),
+        CHANGED("Változott"),
+        NOT_CHANGED("Nem változott"),
+        NEW("Új");
+
+        private final String description;
+
+        Status(String description) {
+            this.description = description;
+        }
+
+        @Override
+        public String toString() {
+            return description;
+        }
     }
 }

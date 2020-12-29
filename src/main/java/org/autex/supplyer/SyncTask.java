@@ -3,6 +3,7 @@ package org.autex.supplyer;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.collections4.ListUtils;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
@@ -12,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
@@ -42,10 +44,13 @@ public class SyncTask extends Task<ObservableList<Product>> {
         PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
         Integer allowedThreads = Configuration.getInstance().getIntegerProperty("noOfCallThreads");
         connectionManager.setDefaultMaxPerRoute(allowedThreads);
+        List<List<Product>> groupedProducts = ListUtils.partition(products, 10);
         ExecutorService service = null;
         try (CloseableHttpClient httpClient = HttpClients.custom().setConnectionManager(connectionManager).build()) {
             service = Executors.newFixedThreadPool(allowedThreads);
-            service.invokeAll(products.stream().map(product -> new SyncProductTask(httpClient, product, getProductURL, authHeader, this)).collect(Collectors.toList()));
+            for (List<Product> productGroup : groupedProducts) {
+                service.invokeAll(products.stream().map(product -> new SyncProductTask(httpClient, product, getProductURL, authHeader, this)).collect(Collectors.toList()));
+            }
         } catch (InterruptedException e) {
             LOGGER.error(e.getMessage(), e);
         } finally {

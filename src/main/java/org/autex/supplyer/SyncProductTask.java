@@ -16,50 +16,50 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 
-public class SyncProductTask implements Callable<Product> {
+public class SyncProductTask implements Callable<List<Product>> {
     private static final Logger LOGGER = LoggerFactory.getLogger(SyncProductTask.class);
     private static final String SKU = "sku";
 
     private final String getProductURL;
     private final HttpClient httpClient;
-    private final Product product;
+    private final List<Product> products;
     private final String authHeader;
     private final SyncTask parentTask;
 
-    public SyncProductTask(HttpClient httpClient, Product product, String getProductURL, String authHeader, SyncTask parentTask) {
+    public SyncProductTask(HttpClient httpClient, List<Product> products, String getProductURL, String authHeader, SyncTask parentTask) {
         this.httpClient = httpClient;
-        this.product = product;
+        this.products = products;
         this.getProductURL = getProductURL;
         this.authHeader = authHeader;
         this.parentTask = parentTask;
     }
 
     @Override
-    public Product call() {
+    public List<Product> call() {
         HttpGet getProductRequest = new HttpGet();
         try {
             getProductRequest.setURI(new URIBuilder(getProductURL)
-                    .addParameter(SKU, product.getSku())
+                    .addParameter(SKU, products.stream().map(Product::getSku).collect(Collectors.joining(",")))
                     .build());
             getProductRequest.setHeader(HttpHeaders.AUTHORIZATION, authHeader);
             HttpResponse resposne = httpClient.execute(getProductRequest);
             HttpEntity entity = resposne.getEntity();
             try (InputStream responseStream = entity.getContent()) {
-                parseResponse(responseStream, product);
+                parseResponse(responseStream, products);
             }
-
-            LOGGER.info("product synchronized: {}", product.getSku());
         } catch (URISyntaxException | IOException e) {
             LOGGER.error(e.getMessage(), e);
         }
 
         parentTask.updateProgress();
-        return product;
+        return products;
     }
 
-    void parseResponse(InputStream contentStream, Product product) throws IOException {
+    void parseResponse(InputStream contentStream, List<Product> products) throws IOException {
         JsonFactory jsonFactory = new JsonFactory();
         try (JsonParser jsonParser = jsonFactory.createParser(contentStream)) {
             while (jsonParser.nextToken() != JsonToken.END_ARRAY) {

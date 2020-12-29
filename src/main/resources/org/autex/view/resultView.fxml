@@ -44,12 +44,18 @@
                         <PropertyValueFactory property="brand" />
                     </cellValueFactory>
                 </TableColumn>
+                <TableColumn fx:id="colStatus" text="Állapot">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="status" />
+                    </cellValueFactory>
+                </TableColumn>
             </columns>
         </TableView>
         <HBox style="-fx-padding: 10 10 10 10;">
             <Pane HBox.hgrow="ALWAYS" />
             <Button onAction="#save" text="mentés" />
             <Button onAction="#sync" text="szinkronizálás" />
+            <Button onAction="#changeStatus" text="Change status" />
         </HBox>
     </VBox>
     <StackPane fx:id="busyVeil" StackPane.alignment="CENTER">

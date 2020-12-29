@@ -13,6 +13,7 @@ module Autex.Webshop.Content.Manager {
     requires com.fasterxml.jackson.core;
     requires com.fasterxml.jackson.databind;
     requires org.apache.commons.codec;
+    requires org.apache.commons.collections4;
 
     opens org.autex.controller to javafx.fxml;
     opens org.autex.model to javafx.base;

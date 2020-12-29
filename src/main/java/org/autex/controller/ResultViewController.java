@@ -5,6 +5,7 @@ import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
@@ -23,6 +24,7 @@ public class ResultViewController {
     @FXML ProgressIndicator progressIndicator;
     @FXML Label lbProgressMessage;
     @FXML TableView<Product> tvResults;
+//    @FXML TableColumn<String, Product> colStatus;
     String supplyerName;
 
     public void convert(Task<ObservableList<Product>> task) {
@@ -55,6 +57,11 @@ public class ResultViewController {
         new Thread(task).start();
     }
 
+    @FXML
+    private void changeStatus() {
+        tvResults.getItems().get(0).setStatus(Product.Status.CHANGED);
+    }
+
     private void saveAsExcel(File file) throws IOException {
         ObservableList<Product> products = tvResults.getItems();
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
@@ -71,7 +78,7 @@ public class ResultViewController {
                 Product product = products.get(i);
                 Row rowData = sheet.createRow(i + 1);
                 rowData.createCell(0).setCellValue(product.getSku());
-                rowData.createCell(1).setCellValue(product.getName());
+                rowData.createCell(1).setCellValue(product.nameProperty().get());
                 rowData.createCell(2).setCellValue(product.getPrice());
                 rowData.createCell(3).setCellValue(product.getStock_quantity());
                 rowData.createCell(4).setCellValue(product.getWeight());
