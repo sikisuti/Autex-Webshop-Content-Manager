@@ -1,15 +1,11 @@
 package org.autex.supplyer;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
 import org.autex.TestParent;
-import org.autex.model.Product;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 public class SupplyerTaskTest extends TestParent {

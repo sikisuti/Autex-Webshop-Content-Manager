@@ -98,8 +98,7 @@ public class Product {
 
     public enum Status {
         UNKNOWN("Ismeretlen"),
-        CHANGED("Változott"),
-        NOT_CHANGED("Nem változott"),
+        EXISTS("Létezik"),
         NEW("Új");
 
         private final String description;

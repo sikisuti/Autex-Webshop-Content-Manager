@@ -23,9 +23,10 @@ public class SyncTask extends Task<ObservableList<Product>> {
     ObservableList<Product> products;
     private long count = 0;
 
-    protected void updateProgress() {
+    protected void updateProgress(int increment) {
         synchronized (this) {
-            super.updateProgress(++count, products.size());
+            count += increment;
+            super.updateProgress(count, products.size());
         }
     }
 
@@ -44,13 +45,11 @@ public class SyncTask extends Task<ObservableList<Product>> {
         PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
         Integer allowedThreads = Configuration.getInstance().getIntegerProperty("noOfCallThreads");
         connectionManager.setDefaultMaxPerRoute(allowedThreads);
-        List<List<Product>> groupedProducts = ListUtils.partition(products, 10);
         ExecutorService service = null;
         try (CloseableHttpClient httpClient = HttpClients.custom().setConnectionManager(connectionManager).build()) {
             service = Executors.newFixedThreadPool(allowedThreads);
-            for (List<Product> productGroup : groupedProducts) {
-                service.invokeAll(products.stream().map(product -> new SyncProductTask(httpClient, product, getProductURL, authHeader, this)).collect(Collectors.toList()));
-            }
+            List<List<Product>> groupedProducts = ListUtils.partition(products, 10);
+            service.invokeAll(groupedProducts.stream().map(productGroup -> new SyncProductTask(httpClient, productGroup, getProductURL, authHeader, this)).collect(Collectors.toList()));
         } catch (InterruptedException e) {
             LOGGER.error(e.getMessage(), e);
         } finally {

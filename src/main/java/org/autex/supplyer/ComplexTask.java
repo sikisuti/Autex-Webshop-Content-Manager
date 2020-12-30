@@ -10,6 +10,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.xssf.usermodel.*;
+import org.autex.exception.DuplicateSkuException;
 import org.autex.model.MetaData;
 import org.autex.model.Product;
 import org.slf4j.Logger;
@@ -28,7 +29,7 @@ public class ComplexTask extends SupplyerTask {
 
     @Override
     protected ObservableList<Product> call() throws Exception {
-            return mergeMasterDataWithStock(loadMasterData());
+        return mergeMasterDataWithStock(loadMasterData());
     }
 
     private Map<String, XSSFRow> loadMasterData() throws IOException {
@@ -62,6 +63,7 @@ public class ComplexTask extends SupplyerTask {
             XSSFWorkbook wb = new XSSFWorkbook(stockStream);
             DataFormatter df = new DataFormatter();
             XSSFSheet sheet = wb.getSheetAt(0);
+            Set<String> processedItems = new HashSet<>();
             updateTitle("3/4 Complex készlet-cikktörzs illesztés");
             for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
                 XSSFRow row = sheet.getRow(rowIndex);
@@ -75,6 +77,16 @@ public class ComplexTask extends SupplyerTask {
                 if (rowFromAllItems != null) {
                     Product product = new Product();
                     Optional.ofNullable(rowFromAllItems.getCell(0)).ifPresent(cell -> product.setSku(df.formatCellValue(cell)));
+                    if (product.getSku() != null && !product.getSku().isEmpty()) {
+                        if (processedItems.contains(product.getSku())) {
+                            throw new DuplicateSkuException(product.getSku() + " row: " + rowIndex);
+                        } else {
+                            processedItems.add(product.getSku());
+                        }
+                    } else {
+                        continue;
+                    }
+
                     product.setName(id);
                     Optional.ofNullable(rowFromAllItems.getCell(4)).ifPresent(cell -> product.setPrice(df.formatCellValue(cell)));
                     Optional.ofNullable(row.getCell(1)).ifPresent(cell -> {

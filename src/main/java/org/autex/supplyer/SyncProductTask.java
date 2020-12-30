@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
@@ -51,30 +52,63 @@ public class SyncProductTask implements Callable<List<Product>> {
             try (InputStream responseStream = entity.getContent()) {
                 parseResponse(responseStream, products);
             }
+
+            products.stream().filter(p -> p.getStatus() == Product.Status.UNKNOWN).forEach(p -> p.setStatus(Product.Status.NEW));
         } catch (URISyntaxException | IOException e) {
             LOGGER.error(e.getMessage(), e);
         }
 
-        parentTask.updateProgress();
+        parentTask.updateProgress(products.size());
         return products;
     }
 
     void parseResponse(InputStream contentStream, List<Product> products) throws IOException {
         JsonFactory jsonFactory = new JsonFactory();
         try (JsonParser jsonParser = jsonFactory.createParser(contentStream)) {
-            while (jsonParser.nextToken() != JsonToken.END_ARRAY) {
-                parseProduct(jsonParser, product);
+            while (jsonParser.nextToken() != null) {
+                if (jsonParser.currentToken() == JsonToken.START_OBJECT) {
+                    parseProduct(jsonParser, products);
+                }
             }
         }
     }
 
-    void parseProduct(JsonParser jsonParser, Product product) throws IOException {
-        while (jsonParser.nextToken() != JsonToken.END_OBJECT) {
+    void parseProduct(JsonParser jsonParser, List<Product> products) throws IOException {
+        String weight = null;
+        Long id = null;
+        String sku = null;
+        int level = 0;
+
+        while (jsonParser.nextToken() != JsonToken.END_OBJECT || level > 0) {
             String fieldName = jsonParser.getCurrentName();
-            if ("id".equals(fieldName) && product.getWeight() == null) {
-                product.setId(jsonParser.nextLongValue(0));
-            } else if ("weight".equals(fieldName) && product.getWeight() == null) {
-                product.setWeight(jsonParser.nextTextValue());
+            if ("id".equals(fieldName)) {
+                id = jsonParser.nextLongValue(0);
+            } else if ("weight".equals(fieldName)) {
+                weight = jsonParser.nextTextValue();
+            } else if ("sku".equals(fieldName)) {
+                sku = jsonParser.nextTextValue();
+            } else if (jsonParser.currentToken() == JsonToken.START_OBJECT) {
+                level++;
+            } else if (jsonParser.currentToken() == JsonToken.END_OBJECT) {
+                level--;
+            }
+        }
+
+        adjustProduct(products, weight, id, sku);
+    }
+
+    private void adjustProduct(List<Product> products, String weight, Long id, String sku) {
+        if (sku != null && !sku.isEmpty()) {
+            Optional<Product> product = products.stream().filter(p -> sku.equals(p.getSku())).findFirst();
+            if (product.isPresent()) {
+                product.get().setStatus(Product.Status.EXISTS);
+                if (product.get().getWeight() == null && weight != null) {
+                    product.get().setWeight(weight);
+                }
+
+                if (product.get().getId() == null && id != null) {
+                    product.get().setId(id);
+                }
             }
         }
     }

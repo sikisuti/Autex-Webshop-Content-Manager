@@ -1,14 +1,17 @@
 package org.autex.controller;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
-import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
+import org.apache.commons.collections4.ListUtils;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
@@ -18,6 +21,7 @@ import org.autex.supplyer.SyncTask;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTable;
 
 import java.io.*;
+import java.util.List;
 
 public class ResultViewController {
     @FXML StackPane busyVeil;
@@ -34,6 +38,14 @@ public class ResultViewController {
         lbProgressMessage.textProperty().bind(task.titleProperty());
         tvResults.itemsProperty().bind(task.valueProperty());
         supplyerName = task.getClass().getName();
+        task.exceptionProperty().addListener((observableValue, throwable, t1) -> {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Hiba");
+            alert.setHeaderText(null);
+            alert.setContentText(t1.getMessage());
+            alert.showAndWait();
+        });
+
         new Thread(task).start();
     }
 
@@ -53,13 +65,15 @@ public class ResultViewController {
         progressIndicator.visibleProperty().bind(task.runningProperty());
         progressIndicator.progressProperty().bind(task.progressProperty());
         lbProgressMessage.textProperty().bind(task.titleProperty());
-        tvResults.itemsProperty().bind(task.valueProperty());
+//        tvResults.itemsProperty().bind(task.valueProperty());
         new Thread(task).start();
     }
 
     @FXML
     private void changeStatus() {
-        tvResults.getItems().get(0).setStatus(Product.Status.CHANGED);
+        List<List<Product>> groupedProducts = ListUtils.partition(tvResults.getItems(), 2);
+
+        groupedProducts.get(0).get(0).setStatus(Product.Status.EXISTS);
     }
 
     private void saveAsExcel(File file) throws IOException {
