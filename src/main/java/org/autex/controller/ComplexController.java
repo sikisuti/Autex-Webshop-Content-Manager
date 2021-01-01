@@ -9,7 +9,7 @@ import javafx.scene.control.Label;
 import javafx.stage.FileChooser;
 import org.autex.Configuration;
 import org.autex.model.Product;
-import org.autex.supplyer.ComplexTask;
+import org.autex.supplier.ComplexSupplierTask;
 
 import java.io.*;
 
@@ -46,6 +46,6 @@ public class ComplexController implements SupplierController {
 
     @Override
     public Task<ObservableList<Product>> getConversionTask() {
-        return new ComplexTask(masterDataFile, stockFile);
+        return new ComplexSupplierTask(masterDataFile, stockFile);
     }
 }

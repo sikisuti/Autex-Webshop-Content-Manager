@@ -1,4 +1,4 @@
-package org.autex.supplyer;
+package org.autex.supplier;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -8,6 +8,7 @@ import java.util.*;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.xssf.usermodel.*;
 import org.autex.exception.DuplicateSkuException;
@@ -16,13 +17,13 @@ import org.autex.model.Product;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ComplexTask extends SupplyerTask {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ComplexTask.class);
+public class ComplexSupplierTask extends Task<ObservableList<Product>> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ComplexSupplierTask.class);
 
     private final File masterDataFile;
     private final File stockFile;
 
-    public ComplexTask(File masterDataFile, File stockFile) {
+    public ComplexSupplierTask(File masterDataFile, File stockFile) {
         this.masterDataFile = masterDataFile;
         this.stockFile = stockFile;
     }

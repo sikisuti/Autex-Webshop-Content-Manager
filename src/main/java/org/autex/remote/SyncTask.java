@@ -1,4 +1,4 @@
-package org.autex.supplyer;
+package org.autex.remote;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
@@ -18,25 +18,18 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
-public class SyncProductTask implements Callable<List<Product>> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SyncProductTask.class);
+public class SyncTask extends RemoteTask {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SyncTask.class);
     private static final String SKU = "sku";
 
-    private final String getProductURL;
-    private final HttpClient httpClient;
-    private final List<Product> products;
-    private final String authHeader;
-    private final SyncTask parentTask;
-
-    public SyncProductTask(HttpClient httpClient, List<Product> products, String getProductURL, String authHeader, SyncTask parentTask) {
+    public SyncTask(HttpClient httpClient, List<Product> products, String getProductURL, String authHeader, RemoteService parentService) {
         this.httpClient = httpClient;
         this.products = products;
         this.getProductURL = getProductURL;
         this.authHeader = authHeader;
-        this.parentTask = parentTask;
+        this.parentService = parentService;
     }
 
     @Override
@@ -58,7 +51,7 @@ public class SyncProductTask implements Callable<List<Product>> {
             LOGGER.error(e.getMessage(), e);
         }
 
-        parentTask.updateProgress(products.size());
+        parentService.updateProgress(products.size());
         return products;
     }
 

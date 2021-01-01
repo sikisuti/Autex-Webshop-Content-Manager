@@ -1,7 +1,8 @@
-package org.autex.supplyer;
+package org.autex.supplier;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -17,25 +18,18 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-public class FileTask extends SupplyerTask {
-    private static final Logger LOGGER = LoggerFactory.getLogger(FileTask.class);
+public class FileSupplierTask extends Task<ObservableList<Product>> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(FileSupplierTask.class);
 
     private final File sourceFile;
 
-    public FileTask(File sourceFile) {
+    public FileSupplierTask(File sourceFile) {
         this.sourceFile = sourceFile;
     }
 
     @Override
     protected ObservableList<Product> call() throws Exception {
-//        try {
             return doJob();
-//        } catch (DuplicateSkuException e) {
-//            exceptionProperty().
-//            failed();
-//        }
-
-//        return null;
     }
 
     private ObservableList<Product> doJob() throws IOException {

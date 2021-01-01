@@ -1,35 +1,37 @@
 package org.autex.controller;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
-import org.apache.commons.collections4.ListUtils;
+import javafx.stage.Stage;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.*;
+import org.autex.App;
 import org.autex.model.Product;
-import org.autex.supplyer.SyncTask;
+import org.autex.remote.CreateTask;
+import org.autex.remote.RemoteService;
+import org.autex.remote.RemoteTask;
+import org.autex.remote.SyncTask;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTable;
 
 import java.io.*;
-import java.util.List;
 
 public class ResultViewController {
     @FXML StackPane busyVeil;
     @FXML ProgressIndicator progressIndicator;
     @FXML Label lbProgressMessage;
     @FXML TableView<Product> tvResults;
-//    @FXML TableColumn<String, Product> colStatus;
-    String supplyerName;
+    String supplierName;
 
     public void convert(Task<ObservableList<Product>> task) {
         busyVeil.visibleProperty().bind(task.runningProperty());
@@ -37,7 +39,7 @@ public class ResultViewController {
         progressIndicator.progressProperty().bind(task.progressProperty());
         lbProgressMessage.textProperty().bind(task.titleProperty());
         tvResults.itemsProperty().bind(task.valueProperty());
-        supplyerName = task.getClass().getName();
+        supplierName = task.getClass().getName();
         task.exceptionProperty().addListener((observableValue, throwable, t1) -> {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Hiba");
@@ -60,26 +62,31 @@ public class ResultViewController {
 
     @FXML
     private void sync() {
-        SyncTask task = new SyncTask(tvResults.getItems());
-        busyVeil.visibleProperty().bind(task.runningProperty());
-        progressIndicator.visibleProperty().bind(task.runningProperty());
-        progressIndicator.progressProperty().bind(task.progressProperty());
-        lbProgressMessage.textProperty().bind(task.titleProperty());
-//        tvResults.itemsProperty().bind(task.valueProperty());
-        new Thread(task).start();
+        startService(SyncTask.class);
     }
 
     @FXML
-    private void changeStatus() {
-        List<List<Product>> groupedProducts = ListUtils.partition(tvResults.getItems(), 2);
+    private void upload() throws IOException {
+        FXMLLoader loader = new FXMLLoader(App.class.getResource("view/fieldSelector.fxml"));
+        Stage stage = new Stage();
+        stage.setTitle("Mező választó");
+        stage.setScene(new Scene(loader.load()));
+        stage.show();
+    }
 
-        groupedProducts.get(0).get(0).setStatus(Product.Status.EXISTS);
+    private void startService(Class<? extends RemoteTask> clazz) {
+        RemoteService service = new RemoteService(tvResults.getItems(), clazz);
+        busyVeil.visibleProperty().bind(service.runningProperty());
+        progressIndicator.visibleProperty().bind(service.runningProperty());
+        progressIndicator.progressProperty().bind(service.progressProperty());
+        lbProgressMessage.textProperty().bind(service.titleProperty());
+        new Thread(service).start();
     }
 
     private void saveAsExcel(File file) throws IOException {
         ObservableList<Product> products = tvResults.getItems();
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
-            XSSFSheet sheet = wb.createSheet(supplyerName);
+            XSSFSheet sheet = wb.createSheet(supplierName);
             Row rowHeader = sheet.createRow(0);
             rowHeader.createCell(0).setCellValue("Cikkszám");
             rowHeader.createCell(1).setCellValue("Név");

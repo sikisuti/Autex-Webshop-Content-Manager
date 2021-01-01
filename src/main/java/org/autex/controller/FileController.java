@@ -7,7 +7,7 @@ import javafx.scene.control.Label;
 import javafx.stage.FileChooser;
 import org.autex.Configuration;
 import org.autex.model.Product;
-import org.autex.supplyer.FileTask;
+import org.autex.supplier.FileSupplierTask;
 
 import java.io.File;
 
@@ -36,6 +36,6 @@ public class FileController implements SupplierController {
 
     @Override
     public Task<ObservableList<Product>> getConversionTask() {
-        return new FileTask(sourceFile);
+        return new FileSupplierTask(sourceFile);
     }
 }

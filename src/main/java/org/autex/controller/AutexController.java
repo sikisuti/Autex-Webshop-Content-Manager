@@ -5,12 +5,10 @@ import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.stage.FileChooser;
-import org.autex.exception.GeneralException;
 import org.autex.model.Product;
-import org.autex.supplyer.AutexTask;
+import org.autex.supplier.AutexSupplierTask;
 
 import java.io.*;
-import java.util.List;
 
 public class AutexController implements SupplierController {
     @FXML private Label lbSourcePath;
@@ -31,6 +29,6 @@ public class AutexController implements SupplierController {
 
     @Override
     public Task<ObservableList<Product>> getConversionTask() {
-        return new AutexTask(cobraFile);
+        return new AutexSupplierTask(cobraFile);
     }
 }

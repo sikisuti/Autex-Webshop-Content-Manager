@@ -1,4 +1,4 @@
-package org.autex.supplyer;
+package org.autex.supplier;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -15,10 +15,10 @@ import java.io.InputStream;
 import java.util.Locale;
 import java.util.Optional;
 
-public class AutexTask extends Task<ObservableList<Product>> {
+public class AutexSupplierTask extends Task<ObservableList<Product>> {
     private final File cobraFile;
 
-    public AutexTask(File cobraFile) {
+    public AutexSupplierTask(File cobraFile) {
         this.cobraFile = cobraFile;
     }
 

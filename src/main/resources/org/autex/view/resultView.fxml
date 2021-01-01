@@ -52,10 +52,10 @@
             </columns>
         </TableView>
         <HBox style="-fx-padding: 10 10 10 10;">
-            <Pane HBox.hgrow="ALWAYS" />
             <Button onAction="#save" text="mentés" />
             <Button onAction="#sync" text="szinkronizálás" />
-            <Button onAction="#changeStatus" text="Change status" />
+            <Pane HBox.hgrow="ALWAYS" />
+            <Button onAction="#upload" text="feltöltés a webshop-ba" />
         </HBox>
     </VBox>
     <StackPane fx:id="busyVeil" StackPane.alignment="CENTER">

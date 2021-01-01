@@ -1,15 +1,11 @@
-package org.autex.supplyer;
+package org.autex.supplier;
 
 import org.autex.TestParent;
-import org.junit.Assert;
+import org.autex.supplier.ComplexSupplierTask;
 import org.junit.Before;
-import org.junit.Test;
 
-import java.io.File;
-import java.io.FileInputStream;
-
-public class ComplexTaskTest extends TestParent {
-    ComplexTask complexTask;
+public class ComplexSupplierTaskTest extends TestParent {
+    ComplexSupplierTask complexSupplierTask;
 
     @Before
     public void setUp() {
