@@ -7,7 +7,7 @@
 
 <StackPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.autex.controller.FieldSelectorController">
     <VBox>
-        <VBox fx:id="selectorList"/>
+        <VBox fx:id="selectorList" style="-fx-padding: 20 20 20 20; -fx-spacing: 10"/>
         <HBox style="-fx-padding: 10 10 10 10;">
             <Pane HBox.hgrow="ALWAYS" />
             <Button onAction="#upload" text="feltöltés a webshop-ba" />
