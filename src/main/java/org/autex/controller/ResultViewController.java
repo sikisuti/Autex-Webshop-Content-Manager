@@ -5,26 +5,28 @@ import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressIndicator;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.*;
 import org.autex.App;
+import org.autex.dialog.PasswordInputDialog;
+import org.autex.exception.InvalidCredentials;
 import org.autex.model.Product;
-import org.autex.remote.CreateTask;
 import org.autex.remote.RemoteService;
 import org.autex.remote.RemoteTask;
 import org.autex.remote.SyncTask;
+import org.autex.util.Configuration;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTable;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 public class ResultViewController {
     @FXML StackPane busyVeil;
@@ -32,6 +34,7 @@ public class ResultViewController {
     @FXML Label lbProgressMessage;
     @FXML TableView<Product> tvResults;
     String supplierName;
+    private String authHeader;
 
     public void convert(Task<ObservableList<Product>> task) {
         busyVeil.visibleProperty().bind(task.runningProperty());
@@ -75,12 +78,30 @@ public class ResultViewController {
     }
 
     private void startService(Class<? extends RemoteTask> clazz) {
-        RemoteService service = new RemoteService(tvResults.getItems(), clazz);
+        RemoteService service = new RemoteService(tvResults.getItems(), clazz, getAuthHeader());
         busyVeil.visibleProperty().bind(service.runningProperty());
         progressIndicator.visibleProperty().bind(service.runningProperty());
         progressIndicator.progressProperty().bind(service.progressProperty());
         lbProgressMessage.textProperty().bind(service.titleProperty());
         new Thread(service).start();
+    }
+
+    private String getAuthHeader() {
+        if (authHeader == null) {
+            Optional<String> password = new PasswordInputDialog().showAndWait();
+            if (password.isEmpty()) {
+                throw new InvalidCredentials();
+            }
+
+            Configuration.getInstance().setPassword(password.get());
+            String key = Configuration.getInstance().getStringProperty("key");
+            String secretKey = Configuration.getInstance().getStringProperty("secretKey");
+            String auth = key + ":" + secretKey;
+            byte[] encodedAuth = Base64.encodeBase64(auth.getBytes(StandardCharsets.UTF_8));
+            authHeader = "Basic " + new String(encodedAuth);
+        }
+
+        return authHeader;
     }
 
     private void saveAsExcel(File file) throws IOException {

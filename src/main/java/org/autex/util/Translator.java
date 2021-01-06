@@ -10,8 +10,12 @@ public class Translator {
 
     static {
         dictionary = new HashMap<>();
-        dictionary.put("weight", "súly");
-        dictionary.put("category", "kategória");
+        dictionary.put("weight", "Súly");
+        dictionary.put("category", "Kategória");
+        dictionary.put("defaultPath", "Keresési könyvtár");
+        dictionary.put("host", "Webszerver host");
+        dictionary.put("productsPath", "Termékek elérési útvonala");
+        dictionary.put("noOfCallThreads", "Párhuzamos feldolgozási szálak száma");
     }
 
     public static String translate(String key) {

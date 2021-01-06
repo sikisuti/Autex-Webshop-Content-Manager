@@ -11,17 +11,18 @@ import java.util.List;
 public class RemoteTaskFactory {
     private final HttpClient httpClient;
     private String getProductURL;
-    private String authHeader;
+    protected final String authHeader;
 
-    public RemoteTaskFactory(HttpClient httpClient) {
+    public RemoteTaskFactory(HttpClient httpClient, String authHeader) {
         this.httpClient = httpClient;
+        this.authHeader = authHeader;
     }
 
     public RemoteTask getTask(Class<? extends RemoteTask> clazz, List<Product> products, RemoteService parentService) {
         if (clazz.equals(SyncTask.class)) {
-            return new SyncTask(httpClient, products, getGetProductURL(), getAuthHeader(), parentService);
+            return new SyncTask(httpClient, products, getGetProductURL(), authHeader, parentService);
         } else if (clazz.equals(CreateTask.class)) {
-            return new CreateTask(httpClient, products, getGetProductURL(), getAuthHeader(), parentService);
+            return new CreateTask(httpClient, products, getGetProductURL(), authHeader, parentService);
         }
 
         return null;
@@ -29,21 +30,9 @@ public class RemoteTaskFactory {
 
     protected String getGetProductURL() {
         if (getProductURL == null) {
-            getProductURL = Configuration.getInstance().getProperty("host") + Configuration.getInstance().getProperty("productsPath");
+            getProductURL = Configuration.getInstance().getStringProperty("host") + Configuration.getInstance().getStringProperty("productsPath");
         }
 
         return getProductURL;
-    }
-
-    protected String getAuthHeader() {
-        if (authHeader == null) {
-            String username = Configuration.getInstance().getCredentialsProperty("username");
-            String password = Configuration.getInstance().getCredentialsProperty("password");
-            String auth = username + ":" + password;
-            byte[] encodedAuth = Base64.encodeBase64(auth.getBytes(StandardCharsets.UTF_8));
-            authHeader = "Basic " + new String(encodedAuth);
-        }
-
-        return authHeader;
     }
 }

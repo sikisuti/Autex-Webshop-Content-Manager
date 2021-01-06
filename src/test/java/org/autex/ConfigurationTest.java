@@ -7,7 +7,7 @@ import org.junit.Test;
 public class ConfigurationTest extends TestParent {
     @Test
     public void testConfiguration() {
-        String defaultPath = Configuration.getInstance().getProperty("defaultPath");
+        String defaultPath = Configuration.getInstance().getStringProperty("defaultPath");
         LOGGER.info(defaultPath);
         Assert.assertNotNull(defaultPath);
     }

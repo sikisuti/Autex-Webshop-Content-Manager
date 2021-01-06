@@ -27,7 +27,7 @@ public class PasswordController {
 
     @FXML
     private void save() {
-        if (mode == Mode.SET) {
+        /*if (mode == Mode.SET) {
             if (pwdNewPassword.getText() == null || pwdNewPassword.getText().isEmpty() || !pwdNewPassword.getText().equals(pwdNewPasswordVerify.getText())) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Hiba");
@@ -39,7 +39,7 @@ public class PasswordController {
 
             Configuration.getInstance().setPassword(pwdNewPassword.getText());
             Configuration.getInstance().setEncryptedProperty("password", pwdNewPassword.getText());
-        }
+        }*/
     }
 
     public void setMode(Mode mode) {

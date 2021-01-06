@@ -24,7 +24,7 @@ public class ComplexController implements SupplierController {
 
     public ComplexController() {
         fileChooser = new FileChooser();
-        File initDir = new File(Configuration.getInstance().getProperty("defaultPath"));
+        File initDir = new File(Configuration.getInstance().getStringProperty("defaultPath"));
         if (initDir.exists()) {
             fileChooser.setInitialDirectory(initDir);
         }

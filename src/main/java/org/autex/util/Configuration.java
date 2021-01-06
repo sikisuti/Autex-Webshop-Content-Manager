@@ -1,5 +1,6 @@
 package org.autex.util;
 
+import org.autex.exception.InvalidCredentials;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
@@ -8,19 +9,13 @@ import java.util.stream.Collectors;
 
 public class Configuration {
     private final Properties properties;
-    private final Properties credentials;
+    List<String> sensitiveProperties = Arrays.asList("key", "secretKey");
     private String password;
 
     private Configuration() {
         properties = new Properties();
         try (FileInputStream fis = new FileInputStream("configuration.properties")) {
             properties.load(fis);
-        } catch (Exception ignored) {
-        }
-
-        credentials = new Properties();
-        try (FileInputStream fis = new FileInputStream("credentials.properties")) {
-            credentials.load(fis);
         } catch (Exception ignored) {
         }
     }
@@ -30,14 +25,20 @@ public class Configuration {
         return instance;
     }
 
-    public String getProperty(String name) {
-        return properties.getProperty(name);
+    public String getStringProperty(String name) {
+        String value = properties.getProperty(name);
+        if (sensitiveProperties.contains(name) && password != null && value != null) {
+            try {
+                value = Secure.decrypt(value, password);
+            } catch (Exception e) {
+                throw new InvalidCredentials();
+            }
+        }
+
+        return value;
     }
     public Integer getIntegerProperty(String name) {
-        return Integer.parseInt(properties.getProperty(name));
-    }
-    public String getCredentialsProperty(String name) {
-        return credentials.getProperty(name);
+        return Integer.parseInt(getStringProperty(name));
     }
 
     public Map<String, String> getProperties() {
@@ -51,8 +52,7 @@ public class Configuration {
 
     public Map<String, String> getSimpleProperties() {
         Map<String, String> simpleProperties = new HashMap<>();
-        List<String> ignoredFields = Arrays.asList("password", "key", "privateKey");
-        for (Map.Entry<Object, Object> property : properties.entrySet().stream().filter(entry -> !ignoredFields.contains(entry.getKey().toString())).collect(Collectors.toSet())) {
+        for (Map.Entry<Object, Object> property : properties.entrySet().stream().filter(entry -> !sensitiveProperties.contains(entry.getKey().toString())).collect(Collectors.toSet())) {
             String key = property.getKey().toString();
             String value = property.getValue().toString();
             simpleProperties.put(key, value);
@@ -65,9 +65,21 @@ public class Configuration {
         this.password = password;
     }
 
-    public void setEncryptedProperty(String propertyName, String unencryptedValue) {
+    public void setProperty(String key, String value) {
+        String storable = value;
+        if (sensitiveProperties.contains(key) && password != null) {
+            try {
+                storable = Secure.encrypt(value.getBytes(StandardCharsets.UTF_8), password);
+            } catch (Exception e) {
+                throw new InvalidCredentials();
+            }
+        }
+
+        properties.setProperty(key, storable);
+    }
+
+    public void storeProperties() {
         try (FileOutputStream fos = new FileOutputStream("configuration.properties")) {
-            properties.setProperty(propertyName, Secure.encrypt(unencryptedValue.getBytes(StandardCharsets.UTF_8), password));
             properties.store(fos, null);
         } catch (Exception ignored) {
         }
