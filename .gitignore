@@ -5,3 +5,4 @@ target
 credentials.properties
 *.log
 *.zip
+log

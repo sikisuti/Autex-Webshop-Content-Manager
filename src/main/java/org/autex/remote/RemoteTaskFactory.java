@@ -2,7 +2,7 @@ package org.autex.remote;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.client.HttpClient;
-import org.autex.Configuration;
+import org.autex.util.Configuration;
 import org.autex.model.Product;
 
 import java.nio.charset.StandardCharsets;

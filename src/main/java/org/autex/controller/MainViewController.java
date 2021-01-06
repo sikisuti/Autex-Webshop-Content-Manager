@@ -9,6 +9,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.autex.App;
 
@@ -52,6 +53,17 @@ public class MainViewController {
     @FXML
     private void openFile() {
 
+    }
+
+    @FXML
+    private void openConfig() throws IOException {
+        FXMLLoader loader = new FXMLLoader(App.class.getResource("view/config.fxml"));
+        Stage stage = new Stage();
+        stage.setTitle("Beállítások");
+        stage.setScene(new Scene(loader.load()));
+        stage.initOwner(rootPane.getScene().getWindow());
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.show();
     }
 
     private static class SupplyerDTO {

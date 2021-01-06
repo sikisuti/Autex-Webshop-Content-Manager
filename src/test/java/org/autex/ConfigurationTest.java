@@ -1,5 +1,6 @@
 package org.autex;
 
+import org.autex.util.Configuration;
 import org.junit.Assert;
 import org.junit.Test;
 

@@ -7,7 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.stage.FileChooser;
-import org.autex.Configuration;
+import org.autex.util.Configuration;
 import org.autex.model.Product;
 import org.autex.supplier.ComplexSupplierTask;
 

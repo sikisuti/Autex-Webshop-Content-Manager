@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.layout.VBox;
 import org.autex.util.Serializer;
+import org.autex.util.Translator;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,11 +16,11 @@ public class FieldSelectorController {
     private Map<String, BooleanProperty> selectedFields = new HashMap<>();
 
     public void initialize() {
-        for (Map.Entry<String, String> field : Serializer.AVAILABLE_FIELDS.entrySet()) {
+        for (String field : Serializer.AVAILABLE_FIELDS) {
             BooleanProperty isSelected = new SimpleBooleanProperty(false);
-            selectedFields.put(field.getKey(), isSelected);
-            CheckBox chk = new CheckBox(field.getValue());
-            chk.setId(field.getKey());
+            selectedFields.put(field, isSelected);
+            CheckBox chk = new CheckBox(Translator.translate(field));
+            chk.setId(field);
             isSelected.bindBidirectional(chk.selectedProperty());
             selectorList.getChildren().add(chk);
         }

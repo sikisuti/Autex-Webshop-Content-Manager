@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.control.cell.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<StackPane prefWidth="800" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.autex.controller.ConfigController">
+    <VBox>
+        <GridPane fx:id="simplePropertiesGrid" style="-fx-padding: 20 20 20 20; -fx-hgap: 10; -fx-vgap: 10">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES"/>
+                <ColumnConstraints hgrow="ALWAYS"/>
+            </columnConstraints>
+        </GridPane>
+        <Button fx:id="btnShowCredentials" text="Hitelesítő adatok" onAction="#showCredentials"/>
+        <GridPane fx:id="credentialsGrid" style="-fx-padding: 20 20 20 20; -fx-hgap: 10; -fx-vgap: 10" visible="false">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES"/>
+                <ColumnConstraints hgrow="ALWAYS"/>
+            </columnConstraints>
+            <Label text="Felhasználói kulcs"/>
+            <TextField fx:id="txtKey" GridPane.columnIndex="1" />
+            <Label text="Felhasználói titkos kulcs" GridPane.rowIndex="1"/>
+            <TextField fx:id="txtSecretKey" GridPane.rowIndex="1" GridPane.columnIndex="1" />
+        </GridPane>
+        <HBox style="-fx-padding: 10 10 10 10;">
+            <Pane HBox.hgrow="ALWAYS" />
+            <Button onAction="#close" text="mégse" />
+        </HBox>
+    </VBox>
+</StackPane>
