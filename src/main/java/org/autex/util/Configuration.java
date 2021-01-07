@@ -8,8 +8,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class Configuration {
+    private static final String PASSWORD = "password";
     private final Properties properties;
-    List<String> sensitiveProperties = Arrays.asList("key", "secretKey");
+    List<String> sensitiveProperties = Arrays.asList(PASSWORD, "key", "secretKey");
     private String password;
 
     private Configuration() {
@@ -18,6 +19,20 @@ public class Configuration {
             properties.load(fis);
         } catch (Exception ignored) {
         }
+    }
+
+    public void init(String password) {
+        this.password = password;
+        if (isInitialized()) {
+            getStringProperty(PASSWORD);
+        } else {
+            setProperty(PASSWORD, password);
+            storeProperties();
+        }
+    }
+
+    public boolean isInitialized() {
+        return properties.getProperty(PASSWORD) != null;
     }
 
     private static final Configuration instance = new Configuration();
@@ -59,10 +74,6 @@ public class Configuration {
         }
 
         return simpleProperties;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public void setProperty(String key, String value) {

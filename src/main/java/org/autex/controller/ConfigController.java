@@ -7,13 +7,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-import org.autex.dialog.PasswordInputDialog;
 import org.autex.util.Configuration;
 import org.autex.util.Translator;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 public class ConfigController {
     @FXML private GridPane simplePropertiesGrid;
@@ -58,12 +56,6 @@ public class ConfigController {
 
     @FXML
     private void showCredentials() {
-        Optional<String> password = new PasswordInputDialog().showAndWait();
-        if (password.isEmpty()) {
-            return;
-        }
-
-        Configuration.getInstance().setPassword(password.get());
         String decryptedKey = Configuration.getInstance().getStringProperty("key");
         SimpleStringProperty keyProperty = new SimpleStringProperty(decryptedKey);
         data.put("key", keyProperty);

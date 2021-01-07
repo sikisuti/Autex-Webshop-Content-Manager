@@ -15,8 +15,6 @@ import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.*;
 import org.autex.App;
-import org.autex.dialog.PasswordInputDialog;
-import org.autex.exception.InvalidCredentials;
 import org.autex.model.Product;
 import org.autex.remote.RemoteService;
 import org.autex.remote.RemoteTask;
@@ -26,7 +24,6 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTable;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.Optional;
 
 public class ResultViewController {
     @FXML StackPane busyVeil;
@@ -88,12 +85,6 @@ public class ResultViewController {
 
     private String getAuthHeader() {
         if (authHeader == null) {
-            Optional<String> password = new PasswordInputDialog().showAndWait();
-            if (password.isEmpty()) {
-                throw new InvalidCredentials();
-            }
-
-            Configuration.getInstance().setPassword(password.get());
             String key = Configuration.getInstance().getStringProperty("key");
             String secretKey = Configuration.getInstance().getStringProperty("secretKey");
             String auth = key + ":" + secretKey;
