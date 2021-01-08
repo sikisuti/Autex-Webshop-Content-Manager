@@ -3,6 +3,7 @@ package org.autex.remote;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import org.apache.commons.collections4.ListUtils;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
@@ -36,7 +37,14 @@ public class RemoteService extends Task<ObservableList<Product>> {
         Integer allowedThreads = Configuration.getIntegerProperty("noOfCallThreads");
         connectionManager.setDefaultMaxPerRoute(allowedThreads);
         ExecutorService service = null;
-        try (CloseableHttpClient httpClient = HttpClients.custom().setConnectionManager(connectionManager).build()) {
+        try (CloseableHttpClient httpClient = HttpClients.custom()
+                .setConnectionManager(connectionManager)
+                .setDefaultRequestConfig(RequestConfig.custom()
+                        .setConnectTimeout(5000)
+                        .setSocketTimeout(10000)
+                        .setConnectionRequestTimeout(10000)
+                        .build())
+                .build()) {
             service = Executors.newFixedThreadPool(allowedThreads);
             RemoteTaskFactory taskFactory = new RemoteTaskFactory(httpClient, authHeader);
             List<List<Product>> groupedProducts = ListUtils.partition(products, 10);

@@ -9,6 +9,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.util.EntityUtils;
 import org.autex.exception.CalloutException;
 import org.autex.model.Product;
 import org.slf4j.Logger;
@@ -45,6 +46,7 @@ public class SyncTask extends RemoteTask {
             HttpEntity entity = response.getEntity();
             int statusCode = response.getStatusLine().getStatusCode();
             if (statusCode > 399) {
+                EntityUtils.consumeQuietly(entity);
                 throw new CalloutException(statusCode, response.getStatusLine().getReasonPhrase());
             }
 
@@ -52,9 +54,13 @@ public class SyncTask extends RemoteTask {
                 parseResponse(responseStream, products);
             }
 
+            EntityUtils.consumeQuietly(entity);
             products.stream().filter(p -> p.getStatus() == Product.Status.UNKNOWN).forEach(p -> p.setStatus(Product.Status.NEW));
-        } catch (URISyntaxException | IOException | CalloutException e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
+            for (Product product : products) {
+                product.setStatus(Product.Status.ACCESS_FAILURE);
+            }
         }
 
         parentService.updateProgress(products.size());

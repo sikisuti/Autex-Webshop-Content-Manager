@@ -41,8 +41,7 @@ public class ConfigController {
 
     @FXML
     private void cancel() {
-        Stage stage = (Stage) simplePropertiesGrid.getScene().getWindow();
-        stage.close();
+        closeWindow();
     }
 
     @FXML
@@ -52,6 +51,12 @@ public class ConfigController {
         }
 
         Configuration.storeProperties();
+        closeWindow();
+    }
+
+    private void closeWindow() {
+        Stage stage = (Stage) simplePropertiesGrid.getScene().getWindow();
+        stage.close();
     }
 
     @FXML
