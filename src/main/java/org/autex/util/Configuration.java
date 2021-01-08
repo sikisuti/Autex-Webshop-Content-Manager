@@ -9,11 +9,11 @@ import java.util.stream.Collectors;
 
 public class Configuration {
     private static final String PASSWORD = "password";
-    private final Properties properties;
-    List<String> sensitiveProperties = Arrays.asList(PASSWORD, "key", "secretKey");
-    private String password;
+    private static final Properties properties;
+    private static final List<String> sensitiveProperties = Arrays.asList(PASSWORD, "key", "secretKey");
+    private static String initiatedPassword;
 
-    private Configuration() {
+    static {
         properties = new Properties();
         try (FileInputStream fis = new FileInputStream("configuration.properties")) {
             properties.load(fis);
@@ -21,8 +21,10 @@ public class Configuration {
         }
     }
 
-    public void init(String password) {
-        this.password = password;
+    private Configuration() {}
+
+    public static void init(String password) {
+        Configuration.initiatedPassword = password;
         if (isInitialized()) {
             getStringProperty(PASSWORD);
         } else {
@@ -31,20 +33,15 @@ public class Configuration {
         }
     }
 
-    public boolean isInitialized() {
+    public static boolean isInitialized() {
         return properties.getProperty(PASSWORD) != null;
     }
 
-    private static final Configuration instance = new Configuration();
-    public static Configuration getInstance() {
-        return instance;
-    }
-
-    public String getStringProperty(String name) {
+    public static String getStringProperty(String name) {
         String value = properties.getProperty(name);
-        if (sensitiveProperties.contains(name) && password != null && value != null) {
+        if (sensitiveProperties.contains(name) && initiatedPassword != null && value != null) {
             try {
-                value = Secure.decrypt(value, password);
+                value = Secure.decrypt(value, initiatedPassword);
             } catch (Exception e) {
                 throw new InvalidCredentials();
             }
@@ -52,11 +49,11 @@ public class Configuration {
 
         return value;
     }
-    public Integer getIntegerProperty(String name) {
+    public static Integer getIntegerProperty(String name) {
         return Integer.parseInt(getStringProperty(name));
     }
 
-    public Map<String, String> getProperties() {
+    public static Map<String, String> getProperties() {
         Map<String, String> propertyMap = new HashMap<>();
         for (Map.Entry<Object, Object> entry : properties.entrySet()) {
             propertyMap.put(String.valueOf(entry.getKey()), String.valueOf(entry.getValue()));
@@ -65,7 +62,7 @@ public class Configuration {
         return propertyMap;
     }
 
-    public Map<String, String> getSimpleProperties() {
+    public static Map<String, String> getSimpleProperties() {
         Map<String, String> simpleProperties = new HashMap<>();
         for (Map.Entry<Object, Object> property : properties.entrySet().stream().filter(entry -> !sensitiveProperties.contains(entry.getKey().toString())).collect(Collectors.toSet())) {
             String key = property.getKey().toString();
@@ -76,11 +73,11 @@ public class Configuration {
         return simpleProperties;
     }
 
-    public void setProperty(String key, String value) {
+    public static void setProperty(String key, String value) {
         String storable = value;
-        if (sensitiveProperties.contains(key) && password != null) {
+        if (sensitiveProperties.contains(key) && initiatedPassword != null) {
             try {
-                storable = Secure.encrypt(value.getBytes(StandardCharsets.UTF_8), password);
+                storable = Secure.encrypt(value.getBytes(StandardCharsets.UTF_8), initiatedPassword);
             } catch (Exception e) {
                 throw new InvalidCredentials();
             }
@@ -89,7 +86,7 @@ public class Configuration {
         properties.setProperty(key, storable);
     }
 
-    public void storeProperties() {
+    public static void storeProperties() {
         try (FileOutputStream fos = new FileOutputStream("configuration.properties")) {
             properties.store(fos, null);
         } catch (Exception ignored) {

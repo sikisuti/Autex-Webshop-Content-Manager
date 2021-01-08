@@ -23,7 +23,7 @@ public class ConfigController {
 
     @FXML
     private void initialize() {
-        Map<String, String> simpleProperties = Configuration.getInstance().getSimpleProperties();
+        Map<String, String> simpleProperties = Configuration.getSimpleProperties();
         int row = 0;
         for (Map.Entry<String, String> propertyEntry : simpleProperties.entrySet()) {
             Label label = new Label(Translator.translate(propertyEntry.getKey()));
@@ -48,19 +48,19 @@ public class ConfigController {
     @FXML
     private void save() {
         for (Map.Entry<String, SimpleStringProperty> entry : data.entrySet()) {
-            Configuration.getInstance().setProperty(entry.getKey(), entry.getValue().get());
+            Configuration.setProperty(entry.getKey(), entry.getValue().get());
         }
 
-        Configuration.getInstance().storeProperties();
+        Configuration.storeProperties();
     }
 
     @FXML
     private void showCredentials() {
-        String decryptedKey = Configuration.getInstance().getStringProperty("key");
+        String decryptedKey = Configuration.getStringProperty("key");
         SimpleStringProperty keyProperty = new SimpleStringProperty(decryptedKey);
         data.put("key", keyProperty);
         txtKey.textProperty().bindBidirectional(keyProperty);
-        String decryptedSecretKey = Configuration.getInstance().getStringProperty("secretKey");
+        String decryptedSecretKey = Configuration.getStringProperty("secretKey");
         SimpleStringProperty secretKeyProperty = new SimpleStringProperty(decryptedSecretKey);
         data.put("secretKey", secretKeyProperty);
         txtSecretKey.textProperty().bindBidirectional(secretKeyProperty);

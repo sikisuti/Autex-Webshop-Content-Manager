@@ -1,24 +1,23 @@
 package org.autex.util;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.FileInputStream;
+import java.util.Properties;
 
 public class Translator {
-    private static final Map<String, String> dictionary;
+    private static final Properties properties;
+
+    static {
+        properties = new Properties();
+        try (FileInputStream fis = new FileInputStream("hun.properties")) {
+            properties.load(fis);
+        } catch (Exception ignored) {
+        }
+    }
 
     private Translator() {}
 
-    static {
-        dictionary = new HashMap<>();
-        dictionary.put("weight", "Súly");
-        dictionary.put("category", "Kategória");
-        dictionary.put("defaultPath", "Keresési könyvtár");
-        dictionary.put("host", "Webszerver host");
-        dictionary.put("productsPath", "Termékek elérési útvonala");
-        dictionary.put("noOfCallThreads", "Párhuzamos feldolgozási szálak száma");
-    }
-
     public static String translate(String key) {
-        return dictionary.getOrDefault(key, key);
+        String value = properties.getProperty(key);
+        return value == null ? key : value;
     }
 }

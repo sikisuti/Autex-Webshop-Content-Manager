@@ -30,7 +30,7 @@ public class RemoteTaskFactory {
 
     protected String getGetProductURL() {
         if (getProductURL == null) {
-            getProductURL = Configuration.getInstance().getStringProperty("host") + Configuration.getInstance().getStringProperty("productsPath");
+            getProductURL = Configuration.getStringProperty("host") + Configuration.getStringProperty("productsPath");
         }
 
         return getProductURL;

@@ -4,6 +4,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import org.autex.util.Translator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -97,19 +98,14 @@ public class Product {
     }
 
     public enum Status {
-        UNKNOWN("Ismeretlen"),
-        EXISTS("Létezik"),
-        NEW("Új");
-
-        private final String description;
-
-        Status(String description) {
-            this.description = description;
-        }
+        UNKNOWN,
+        EXISTS,
+        NEW,
+        ACCESS_FAILURE;
 
         @Override
         public String toString() {
-            return description;
+            return Translator.translate(this.name());
         }
     }
 }

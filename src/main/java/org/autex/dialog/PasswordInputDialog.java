@@ -40,7 +40,7 @@ public class PasswordInputDialog extends Dialog<Boolean> {
 
         setResultConverter(dialogButton -> {
             if (dialogButton == ButtonType.OK) {
-                Configuration.getInstance().init(passwordField.getText());
+                Configuration.init(passwordField.getText());
                 return true;
             }
 
@@ -65,7 +65,7 @@ public class PasswordInputDialog extends Dialog<Boolean> {
                     event.consume();
                 } else {
                     try {
-                        Configuration.getInstance().init(passwordField.getText());
+                        Configuration.init(passwordField.getText());
                     } catch (Exception e) {
                         showInvalidCredentialsAlert();
                         passwordField.clear();

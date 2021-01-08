@@ -33,7 +33,7 @@ public class RemoteService extends Task<ObservableList<Product>> {
     @Override
     protected ObservableList<Product> call() throws Exception {
         PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
-        Integer allowedThreads = Configuration.getInstance().getIntegerProperty("noOfCallThreads");
+        Integer allowedThreads = Configuration.getIntegerProperty("noOfCallThreads");
         connectionManager.setDefaultMaxPerRoute(allowedThreads);
         ExecutorService service = null;
         try (CloseableHttpClient httpClient = HttpClients.custom().setConnectionManager(connectionManager).build()) {

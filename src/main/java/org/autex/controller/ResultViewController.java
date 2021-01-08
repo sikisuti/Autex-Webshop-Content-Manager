@@ -85,8 +85,8 @@ public class ResultViewController {
 
     private String getAuthHeader() {
         if (authHeader == null) {
-            String key = Configuration.getInstance().getStringProperty("key");
-            String secretKey = Configuration.getInstance().getStringProperty("secretKey");
+            String key = Configuration.getStringProperty("key");
+            String secretKey = Configuration.getStringProperty("secretKey");
             String auth = key + ":" + secretKey;
             byte[] encodedAuth = Base64.encodeBase64(auth.getBytes(StandardCharsets.UTF_8));
             authHeader = "Basic " + new String(encodedAuth);

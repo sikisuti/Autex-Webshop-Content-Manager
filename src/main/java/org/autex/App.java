@@ -33,7 +33,7 @@ public class App extends Application {
     }
 
     private void passwordCheckAndInit() {
-        PasswordInputDialog.Mode mode = Configuration.getInstance().isInitialized() ?
+        PasswordInputDialog.Mode mode = Configuration.isInitialized() ?
                 PasswordInputDialog.Mode.PROVIDE :
                 PasswordInputDialog.Mode.CREATE;
 

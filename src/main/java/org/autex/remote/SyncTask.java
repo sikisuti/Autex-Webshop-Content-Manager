@@ -9,6 +9,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
+import org.autex.exception.CalloutException;
 import org.autex.model.Product;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,14 +41,19 @@ public class SyncTask extends RemoteTask {
                     .addParameter(SKU, products.stream().map(Product::getSku).collect(Collectors.joining(",")))
                     .build());
             getProductRequest.setHeader(HttpHeaders.AUTHORIZATION, authHeader);
-            HttpResponse resposne = httpClient.execute(getProductRequest);
-            HttpEntity entity = resposne.getEntity();
+            HttpResponse response = httpClient.execute(getProductRequest);
+            HttpEntity entity = response.getEntity();
+            int statusCode = response.getStatusLine().getStatusCode();
+            if (statusCode > 399) {
+                throw new CalloutException(statusCode, response.getStatusLine().getReasonPhrase());
+            }
+
             try (InputStream responseStream = entity.getContent()) {
                 parseResponse(responseStream, products);
             }
 
             products.stream().filter(p -> p.getStatus() == Product.Status.UNKNOWN).forEach(p -> p.setStatus(Product.Status.NEW));
-        } catch (URISyntaxException | IOException e) {
+        } catch (URISyntaxException | IOException | CalloutException e) {
             LOGGER.error(e.getMessage(), e);
         }
 
