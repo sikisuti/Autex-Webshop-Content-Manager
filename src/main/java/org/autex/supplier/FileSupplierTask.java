@@ -7,7 +7,6 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.autex.exception.DuplicateSkuException;
-import org.autex.model.MetaData;
 import org.autex.model.Product;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -11,7 +11,6 @@ import javafx.collections.ObservableList;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.xssf.usermodel.*;
 import org.autex.exception.DuplicateSkuException;
-import org.autex.model.MetaData;
 import org.autex.model.Product;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

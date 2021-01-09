@@ -20,12 +20,14 @@ public class FieldSelectorDialog extends Dialog<Set<String>> {
     public FieldSelectorDialog(Set<String> allFields) {
         setTitle("Frissítésre kiválasztott mezők");
         setHeaderText(null);
+        ButtonType okButtonType = new ButtonType("Webshop frissítése", ButtonBar.ButtonData.OK_DONE);
         getDialogPane().getButtonTypes().addAll(
-                new ButtonType("Webshop frissítése", ButtonBar.ButtonData.OK_DONE),
+                okButtonType,
                 new ButtonType("mégse", ButtonBar.ButtonData.CANCEL_CLOSE));
         VBox pane = new VBox();
         pane.setPadding(new Insets(20));
         pane.setSpacing(10);
+        getDialogPane().setContent(pane);
         for (String field : allFields) {
             BooleanProperty isSelected = new SimpleBooleanProperty(false);
             selectedFields.put(field, isSelected);
@@ -35,7 +37,7 @@ public class FieldSelectorDialog extends Dialog<Set<String>> {
             pane.getChildren().add(cb);
         }
 
-        Button btnOK = (Button) getDialogPane().lookupButton(ButtonType.OK);
+        Button btnOK = (Button) getDialogPane().lookupButton(okButtonType);
         btnOK.addEventFilter(ActionEvent.ACTION, this::checkInput);
 
 

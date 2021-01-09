@@ -3,18 +3,14 @@ package org.autex.controller;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.*;
-import org.autex.App;
 import org.autex.dialog.FieldSelectorDialog;
 import org.autex.model.Product;
 import org.autex.service.RemoteService;
@@ -69,18 +65,12 @@ public class ResultViewController {
     }
 
     @FXML
-    private void upload() throws IOException {
+    private void upload() {
         FieldSelectorDialog dialog = new FieldSelectorDialog(tvResults.getItems().get(0).getAllFields());
         Optional<Set<String>> selectedFields = dialog.showAndWait();
         if (selectedFields.isPresent()) {
             startService(new UploadService(tvResults.getItems(), getAuthHeader()));
         }
-
-        FXMLLoader loader = new FXMLLoader(App.class.getResource("view/fieldSelector.fxml"));
-        Stage stage = new Stage();
-        stage.setTitle("Mező választó");
-        stage.setScene(new Scene(loader.load()));
-        stage.show();
     }
 
     private void startService(RemoteService service) {
