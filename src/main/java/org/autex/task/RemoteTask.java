@@ -1,7 +1,8 @@
-package org.autex.remote;
+package org.autex.task;
 
 import org.apache.http.client.HttpClient;
 import org.autex.model.Product;
+import org.autex.service.RemoteService;
 
 import java.util.List;
 import java.util.concurrent.Callable;

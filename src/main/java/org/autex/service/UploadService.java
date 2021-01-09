@@ -1,9 +1,10 @@
-package org.autex.remote;
+package org.autex.service;
 
 import javafx.collections.ObservableList;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.autex.model.Product;
+import org.autex.task.CreateTask;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;

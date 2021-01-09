@@ -1,4 +1,4 @@
-package org.autex.remote;
+package org.autex.task;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
@@ -12,6 +12,7 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.util.EntityUtils;
 import org.autex.exception.CalloutException;
 import org.autex.model.Product;
+import org.autex.service.RemoteService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

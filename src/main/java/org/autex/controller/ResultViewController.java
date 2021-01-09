@@ -17,10 +17,9 @@ import org.apache.poi.xssf.usermodel.*;
 import org.autex.App;
 import org.autex.dialog.FieldSelectorDialog;
 import org.autex.model.Product;
-import org.autex.remote.RemoteService;
-import org.autex.remote.SyncService;
-import org.autex.remote.SyncTask;
-import org.autex.remote.UploadService;
+import org.autex.service.RemoteService;
+import org.autex.service.SyncService;
+import org.autex.service.UploadService;
 import org.autex.util.Configuration;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTable;
 

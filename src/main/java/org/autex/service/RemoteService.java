@@ -1,4 +1,4 @@
-package org.autex.remote;
+package org.autex.service;
 
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;

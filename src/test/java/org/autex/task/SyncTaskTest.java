@@ -1,4 +1,4 @@
-package org.autex.remote;
+package org.autex.task;
 
 import org.autex.TestParent;
 import org.junit.Test;
