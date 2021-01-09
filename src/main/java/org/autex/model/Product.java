@@ -1,96 +1,69 @@
 package org.autex.model;
 
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 import org.autex.util.Translator;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class Product {
-    private Long id;
-    private String sku;
-    private StringProperty name = new SimpleStringProperty();
-    private String price;
-    private Integer stock_quantity;
-    private String weight;
-    private List<MetaData> meta_data = new ArrayList<>();
-    public ObjectProperty<Status> status = new SimpleObjectProperty<>(Status.UNKNOWN);
+    public static final String BRAND = "_brand";
+    public static final String ID = "id";
+    public static final String NAME = "name";
+    public static final String PRICE = "price";
+    public static final String SKU = "sku";
+    public static final String STOCK_QUANTITY = "stock_quantity";
+    public static final String WEIGHT = "weight";
 
-    public Long getId() {
-        return id;
+    private final Map<String, SimpleStringProperty> data = new HashMap<>();
+
+    private final ObjectProperty<Status> status = new SimpleObjectProperty<>(Status.UNKNOWN);
+
+    public void setField(String name, String value) {
+        if (data.containsKey(name)) {
+            data.get(name).set(value);
+        } else {
+            data.put(name, new SimpleStringProperty(value));
+        }
     }
 
-    public String getName() {
-        return name.get();
+    public String getField(String name) {
+        if (!data.containsKey(name)) {
+            data.put(name, new SimpleStringProperty());
+        }
+
+        return data.get(name).get();
     }
 
-    public void setName(String name) {
-        this.name.set(name);
+    public StringProperty idProperty() {
+        if (!data.containsKey(ID)) {
+            data.put(ID, new SimpleStringProperty());
+        }
+
+        return data.get(ID);
     }
 
     public StringProperty nameProperty() {
-        return name;
+        return data.get(NAME);
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public StringProperty skuProperty() {
+        return data.get(SKU);
     }
 
-    public String getSku() {
-        return sku;
+    public StringProperty priceProperty() {
+        return data.get(PRICE);
     }
 
-    public void setSku(String sku) {
-        this.sku = sku;
+    public StringProperty stockQuantityProperty() {
+        return data.get(STOCK_QUANTITY);
     }
 
-    public String getPrice() {
-        return price;
+    public StringProperty weightProperty() {
+        return data.get(WEIGHT);
     }
 
-    public void setPrice(String price) {
-        this.price = price;
-    }
-
-    public Integer getStock_quantity() {
-        return stock_quantity;
-    }
-
-    public void setStock_quantity(Integer stock_quantity) {
-        this.stock_quantity = stock_quantity;
-    }
-
-    public String getWeight() {
-        return weight;
-    }
-
-    public void setWeight(String weight) {
-        this.weight = weight;
-    }
-
-    public List<MetaData> getMeta_data() {
-        return meta_data;
-    }
-
-    public void setMeta_data(List<MetaData> meta_data) {
-        this.meta_data = meta_data;
-    }
-
-    public String getBrand() {
-        Optional<MetaData> metaDataBrand = getMeta_data().stream().filter(metaData -> metaData.getKey().equals("_brand")).findFirst();
-        return metaDataBrand.map(MetaData::getValue).orElse(null);
-    }
-
-    public Status getStatus() {
-        return status.get();
-    }
-
-    public void setStatus(Status status) {
-        this.status.set(status);
+    public StringProperty brandProperty() {
+        return data.get(BRAND);
     }
 
     public ObjectProperty<Status> statusProperty() {

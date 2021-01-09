@@ -17,14 +17,14 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static org.autex.model.Product.*;
+
 public class SyncTask extends RemoteTask {
     private static final Logger LOGGER = LoggerFactory.getLogger(SyncTask.class);
-    private static final String SKU = "sku";
 
     public SyncTask(HttpClient httpClient, List<Product> products, String getProductURL, String authHeader, RemoteService parentService) {
         this.httpClient = httpClient;
@@ -39,7 +39,7 @@ public class SyncTask extends RemoteTask {
         HttpGet getProductRequest = new HttpGet();
         try {
             getProductRequest.setURI(new URIBuilder(getProductURL)
-                    .addParameter(SKU, products.stream().map(Product::getSku).collect(Collectors.joining(",")))
+                    .addParameter(SKU, products.stream().map(p -> p.getField(SKU)).collect(Collectors.joining(",")))
                     .build());
             getProductRequest.setHeader(HttpHeaders.AUTHORIZATION, authHeader);
             HttpResponse response = httpClient.execute(getProductRequest);
@@ -55,11 +55,11 @@ public class SyncTask extends RemoteTask {
             }
 
             EntityUtils.consumeQuietly(entity);
-            products.stream().filter(p -> p.getStatus() == Product.Status.UNKNOWN).forEach(p -> p.setStatus(Product.Status.NEW));
+            products.stream().filter(p -> p.statusProperty().get() == Product.Status.UNKNOWN).forEach(p -> p.statusProperty().set(Product.Status.NEW));
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             for (Product product : products) {
-                product.setStatus(Product.Status.ACCESS_FAILURE);
+                product.statusProperty().set(Product.Status.ACCESS_FAILURE);
             }
         }
 
@@ -104,15 +104,15 @@ public class SyncTask extends RemoteTask {
 
     private void adjustProduct(List<Product> products, String weight, Long id, String sku) {
         if (sku != null && !sku.isEmpty()) {
-            Optional<Product> product = products.stream().filter(p -> sku.equals(p.getSku())).findFirst();
+            Optional<Product> product = products.stream().filter(p -> sku.equals(p.getField(SKU))).findFirst();
             if (product.isPresent()) {
-                product.get().setStatus(Product.Status.EXISTS);
-                if (product.get().getWeight() == null && weight != null) {
-                    product.get().setWeight(weight);
+                product.get().statusProperty().set(Product.Status.EXISTS);
+                if (product.get().getField(WEIGHT) == null && weight != null) {
+                    product.get().setField(WEIGHT, weight);
                 }
 
-                if (product.get().getId() == null && id != null) {
-                    product.get().setId(id);
+                if (product.get().getField(ID) == null && id != null) {
+                    product.get().setField(ID, String.valueOf(id));
                 }
             }
         }

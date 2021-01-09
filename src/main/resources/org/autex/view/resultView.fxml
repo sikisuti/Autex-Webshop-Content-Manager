@@ -31,7 +31,7 @@
                 </TableColumn>
                 <TableColumn fx:id="colQuantity" text="Készlet">
                     <cellValueFactory>
-                        <PropertyValueFactory property="stock_quantity" />
+                        <PropertyValueFactory property="stockQuantity" />
                     </cellValueFactory>
                 </TableColumn>
                 <TableColumn fx:id="colWeight" text="Súly">

@@ -2,7 +2,6 @@ package org.autex.supplier;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import org.apache.poi.hssf.usermodel.HSSFDataFormatter;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -15,7 +14,7 @@ import java.io.InputStream;
 import java.util.Locale;
 import java.util.Optional;
 
-public class AutexSupplierTask extends Task<ObservableList<Product>> {
+public class AutexSupplierTask extends SupplierTask {
     private final File cobraFile;
 
     public AutexSupplierTask(File cobraFile) {
@@ -23,7 +22,7 @@ public class AutexSupplierTask extends Task<ObservableList<Product>> {
     }
 
     @Override
-    protected ObservableList<Product> call() throws Exception {
+    protected ObservableList<Product> doJob() throws Exception {
         try (InputStream cobraStream = new FileInputStream(cobraFile)) {
             ObservableList<Product> products = FXCollections.observableArrayList();
             HSSFWorkbook wb = new HSSFWorkbook(cobraStream);
@@ -36,10 +35,10 @@ public class AutexSupplierTask extends Task<ObservableList<Product>> {
                 }
 
                 Product product = new Product();
-                Optional.ofNullable(row.getCell(0)).ifPresent(cell -> product.setSku(df.formatCellValue(cell)));
-                Optional.ofNullable(row.getCell(3)).ifPresent(cell -> product.setName(df.formatCellValue(cell)));
-                Optional.ofNullable(row.getCell(8)).ifPresent(cell -> product.setStock_quantity(Integer.parseInt(df.formatCellValue(cell))));
-                Optional.ofNullable(row.getCell(15)).ifPresent(cell -> product.setPrice(df.formatCellValue(cell)));
+                Optional.ofNullable(row.getCell(0)).ifPresent(cell -> product.setField(Product.SKU, df.formatCellValue(cell)));
+                Optional.ofNullable(row.getCell(3)).ifPresent(cell -> product.setField(Product.NAME, df.formatCellValue(cell)));
+                Optional.ofNullable(row.getCell(8)).ifPresent(cell -> product.setField(Product.STOCK_QUANTITY, df.formatCellValue(cell)));
+                Optional.ofNullable(row.getCell(15)).ifPresent(cell -> product.setField(Product.PRICE, df.formatCellValue(cell)));
                 products.add(product);
             }
 

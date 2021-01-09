@@ -2,7 +2,6 @@ package org.autex.supplier;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -18,7 +17,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-public class FileSupplierTask extends Task<ObservableList<Product>> {
+public class FileSupplierTask extends SupplierTask {
     private static final Logger LOGGER = LoggerFactory.getLogger(FileSupplierTask.class);
 
     private final File sourceFile;
@@ -28,11 +27,7 @@ public class FileSupplierTask extends Task<ObservableList<Product>> {
     }
 
     @Override
-    protected ObservableList<Product> call() throws Exception {
-            return doJob();
-    }
-
-    private ObservableList<Product> doJob() throws IOException {
+    protected ObservableList<Product> doJob() throws IOException {
         updateTitle("Fájl betöltés");
         try (InputStream stockStream = new FileInputStream(sourceFile)) {
             ObservableList<Product> content = FXCollections.observableArrayList();
@@ -44,27 +39,22 @@ public class FileSupplierTask extends Task<ObservableList<Product>> {
                 XSSFRow row = sheet.getRow(rowIndex);
 
                 Product product = new Product();
-                Optional.ofNullable(row.getCell(0)).ifPresent(cell -> product.setSku(df.formatCellValue(cell)));
-                if (product.getSku() != null && !product.getSku().isEmpty()) {
-                    if (processedItems.contains(product.getSku())) {
-                        throw new DuplicateSkuException(product.getSku());
+                Optional.ofNullable(row.getCell(0)).ifPresent(cell -> product.setField(Product.SKU, df.formatCellValue(cell)));
+                if (product.getField(Product.SKU) != null && !product.getField(Product.SKU).isEmpty()) {
+                    if (processedItems.contains(product.getField(Product.SKU))) {
+                        throw new DuplicateSkuException(product.getField(Product.SKU));
                     } else {
-                        processedItems.add(product.getSku());
+                        processedItems.add(product.getField(Product.SKU));
                     }
                 } else {
                     continue;
                 }
 
-                Optional.ofNullable(row.getCell(1)).ifPresent(cell -> product.setName(df.formatCellValue(cell)));
-                Optional.ofNullable(row.getCell(2)).ifPresent(cell -> product.setPrice(df.formatCellValue(cell)));
-                Optional.ofNullable(row.getCell(3)).ifPresent(cell -> product.setStock_quantity(Integer.parseInt(df.formatCellValue(cell))));
-                Optional.ofNullable(row.getCell(4)).ifPresent(cell -> product.setWeight(df.formatCellValue(cell)));
-                Optional.ofNullable(row.getCell(5)).ifPresent(cell -> {
-                    MetaData metaData = new MetaData();
-                    metaData.setKey("_brand");
-                    metaData.setValue(df.formatCellValue(cell));
-                    product.getMeta_data().add(metaData);
-                });
+                Optional.ofNullable(row.getCell(1)).ifPresent(cell -> product.setField(Product.NAME, df.formatCellValue(cell)));
+                Optional.ofNullable(row.getCell(2)).ifPresent(cell -> product.setField(Product.PRICE, df.formatCellValue(cell)));
+                Optional.ofNullable(row.getCell(3)).ifPresent(cell -> product.setField(Product.STOCK_QUANTITY, df.formatCellValue(cell)));
+                Optional.ofNullable(row.getCell(4)).ifPresent(cell -> product.setField(Product.WEIGHT, df.formatCellValue(cell)));
+                Optional.ofNullable(row.getCell(5)).ifPresent(cell -> product.setField(Product.BRAND, df.formatCellValue(cell)));
 
                 content.add(product);
                 updateProgress(rowIndex, sheet.getLastRowNum());

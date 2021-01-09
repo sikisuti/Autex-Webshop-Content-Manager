@@ -110,12 +110,12 @@ public class ResultViewController {
             for (int i = 0; i < products.size(); i++) {
                 Product product = products.get(i);
                 Row rowData = sheet.createRow(i + 1);
-                rowData.createCell(0).setCellValue(product.getSku());
-                rowData.createCell(1).setCellValue(product.nameProperty().get());
-                rowData.createCell(2).setCellValue(product.getPrice());
-                rowData.createCell(3).setCellValue(product.getStock_quantity());
-                rowData.createCell(4).setCellValue(product.getWeight());
-                rowData.createCell(5).setCellValue(product.getBrand());
+                rowData.createCell(0).setCellValue(product.getField(Product.SKU));
+                rowData.createCell(1).setCellValue(product.getField(Product.NAME));
+                rowData.createCell(2).setCellValue(product.getField(Product.PRICE));
+                rowData.createCell(3).setCellValue(product.getField(Product.STOCK_QUANTITY));
+                rowData.createCell(4).setCellValue(product.getField(Product.WEIGHT));
+                rowData.createCell(5).setCellValue(product.getField(Product.BRAND));
             }
 
             CellReference topLeft = new CellReference(sheet.getRow(0).getCell(0));

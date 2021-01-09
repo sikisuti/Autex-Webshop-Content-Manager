@@ -8,7 +8,6 @@ import java.util.*;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.xssf.usermodel.*;
 import org.autex.exception.DuplicateSkuException;
@@ -17,7 +16,7 @@ import org.autex.model.Product;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ComplexSupplierTask extends Task<ObservableList<Product>> {
+public class ComplexSupplierTask extends SupplierTask {
     private static final Logger LOGGER = LoggerFactory.getLogger(ComplexSupplierTask.class);
 
     private final File masterDataFile;
@@ -29,7 +28,7 @@ public class ComplexSupplierTask extends Task<ObservableList<Product>> {
     }
 
     @Override
-    protected ObservableList<Product> call() throws Exception {
+    protected ObservableList<Product> doJob() throws Exception {
         return mergeMasterDataWithStock(loadMasterData());
     }
 
@@ -77,29 +76,24 @@ public class ComplexSupplierTask extends Task<ObservableList<Product>> {
                 XSSFRow rowFromAllItems = masterData.get(id);
                 if (rowFromAllItems != null) {
                     Product product = new Product();
-                    Optional.ofNullable(rowFromAllItems.getCell(0)).ifPresent(cell -> product.setSku(df.formatCellValue(cell)));
-                    if (product.getSku() != null && !product.getSku().isEmpty()) {
-                        if (processedItems.contains(product.getSku())) {
-                            throw new DuplicateSkuException(product.getSku() + " row: " + rowIndex);
+                    Optional.ofNullable(rowFromAllItems.getCell(0)).ifPresent(cell -> product.setField(Product.SKU, df.formatCellValue(cell)));
+                    if (product.getField(Product.SKU) != null && !product.getField(Product.SKU).isEmpty()) {
+                        if (processedItems.contains(product.getField(Product.SKU))) {
+                            throw new DuplicateSkuException(product.getField(Product.SKU) + " row: " + rowIndex);
                         } else {
-                            processedItems.add(product.getSku());
+                            processedItems.add(product.getField(Product.SKU));
                         }
                     } else {
                         continue;
                     }
 
-                    product.setName(id);
-                    Optional.ofNullable(rowFromAllItems.getCell(4)).ifPresent(cell -> product.setPrice(df.formatCellValue(cell)));
-                    Optional.ofNullable(row.getCell(1)).ifPresent(cell -> {
-                        MetaData metaData = new MetaData();
-                        product.getMeta_data().add(metaData);
-                        metaData.setKey("_brand");
-                        metaData.setValue(df.formatCellValue(cell));
-                    });
-                    Optional.ofNullable(row.getCell(3)).ifPresent(cell -> product.setStock_quantity(Integer.parseInt(df.formatCellValue(cell))));
+                    product.setField(Product.NAME, id);
+                    Optional.ofNullable(rowFromAllItems.getCell(4)).ifPresent(cell -> product.setField(Product.PRICE, df.formatCellValue(cell)));
+                    Optional.ofNullable(row.getCell(1)).ifPresent(cell -> product.setField(Product.BRAND, df.formatCellValue(cell)));
+                    Optional.ofNullable(row.getCell(3)).ifPresent(cell -> product.setField(Product.STOCK_QUANTITY, df.formatCellValue(cell)));
 
                     content.add(product);
-                    LOGGER.info("Product merged: {}", product.getSku());
+                    LOGGER.info("Product merged: {}", product.getField(Product.SKU));
                 }
 
                 updateProgress(rowIndex, sheet.getLastRowNum());
