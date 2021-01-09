@@ -2,7 +2,6 @@ package org.autex.remote;
 
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
-import org.apache.commons.collections4.ListUtils;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -12,22 +11,18 @@ import org.autex.model.Product;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
 
-public class RemoteService extends Task<ObservableList<Product>> {
+public abstract class RemoteService extends Task<ObservableList<Product>> {
     private static final Logger LOGGER = LoggerFactory.getLogger(RemoteService.class);
     protected ObservableList<Product> products;
     private long count = 0;
-    Class<? extends RemoteTask> clazz;
-    private final String authHeader;
+    protected final String authHeader;
+    private String getProductURL;
 
-
-    public RemoteService(ObservableList<Product> products, Class<? extends RemoteTask> clazz, String authHeader) {
+    public RemoteService(ObservableList<Product> products, String authHeader) {
         this.products = products;
-        this.clazz = clazz;
         this.authHeader = authHeader;
     }
 
@@ -46,9 +41,7 @@ public class RemoteService extends Task<ObservableList<Product>> {
                         .build())
                 .build()) {
             service = Executors.newFixedThreadPool(allowedThreads);
-            RemoteTaskFactory taskFactory = new RemoteTaskFactory(httpClient, authHeader);
-            List<List<Product>> groupedProducts = ListUtils.partition(products, 10);
-            service.invokeAll(groupedProducts.stream().map(productGroup -> taskFactory.getTask(clazz, productGroup, this)).collect(Collectors.toList()));
+            runTask(httpClient, service);
         } catch (InterruptedException e) {
             LOGGER.error(e.getMessage(), e);
         } finally {
@@ -58,6 +51,16 @@ public class RemoteService extends Task<ObservableList<Product>> {
         }
 
         return products;
+    }
+
+    protected abstract void runTask(CloseableHttpClient httpClient, ExecutorService service) throws Exception;
+
+    protected String getGetProductURL() {
+        if (getProductURL == null) {
+            getProductURL = Configuration.getStringProperty("host") + Configuration.getStringProperty("productsPath");
+        }
+
+        return getProductURL;
     }
 
     public void updateProgress(int increment) {

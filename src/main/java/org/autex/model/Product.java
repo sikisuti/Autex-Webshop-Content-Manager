@@ -34,6 +34,10 @@ public class Product {
         return data.get(name).get();
     }
 
+    public Set<String> getAllFields() {
+        return data.keySet();
+    }
+
     public StringProperty idProperty() {
         if (!data.containsKey(ID)) {
             data.put(ID, new SimpleStringProperty());
@@ -66,6 +70,9 @@ public class Product {
         return data.get(BRAND);
     }
 
+    public Status getStatus() {
+        return status.get();
+    }
     public ObjectProperty<Status> statusProperty() {
         return status;
     }

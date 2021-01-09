@@ -27,11 +27,7 @@ public class SyncTask extends RemoteTask {
     private static final Logger LOGGER = LoggerFactory.getLogger(SyncTask.class);
 
     public SyncTask(HttpClient httpClient, List<Product> products, String getProductURL, String authHeader, RemoteService parentService) {
-        this.httpClient = httpClient;
-        this.products = products;
-        this.getProductURL = getProductURL;
-        this.authHeader = authHeader;
-        this.parentService = parentService;
+        super(httpClient, products, getProductURL, authHeader, parentService);
     }
 
     @Override

@@ -5,9 +5,9 @@ import org.autex.model.Product;
 
 import java.util.List;
 
-public class CreateTask extends RemoteTask {
+public class UpdateTask extends RemoteTask {
 
-    public CreateTask(HttpClient httpClient, List<Product> products, String getProductURL, String authHeader, RemoteService parentService) {
+    public UpdateTask(HttpClient httpClient, List<Product> products, String getProductURL, String authHeader, RemoteService parentService) {
         super(httpClient, products, getProductURL, authHeader, parentService);
     }
 

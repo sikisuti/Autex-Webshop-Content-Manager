@@ -15,15 +15,19 @@ import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.*;
 import org.autex.App;
+import org.autex.dialog.FieldSelectorDialog;
 import org.autex.model.Product;
 import org.autex.remote.RemoteService;
-import org.autex.remote.RemoteTask;
+import org.autex.remote.SyncService;
 import org.autex.remote.SyncTask;
+import org.autex.remote.UploadService;
 import org.autex.util.Configuration;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTable;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
+import java.util.Set;
 
 public class ResultViewController {
     @FXML StackPane busyVeil;
@@ -62,11 +66,17 @@ public class ResultViewController {
 
     @FXML
     private void sync() {
-        startService(SyncTask.class);
+        startService(new SyncService(tvResults.getItems(), getAuthHeader()));
     }
 
     @FXML
     private void upload() throws IOException {
+        FieldSelectorDialog dialog = new FieldSelectorDialog(tvResults.getItems().get(0).getAllFields());
+        Optional<Set<String>> selectedFields = dialog.showAndWait();
+        if (selectedFields.isPresent()) {
+            startService(new UploadService(tvResults.getItems(), getAuthHeader()));
+        }
+
         FXMLLoader loader = new FXMLLoader(App.class.getResource("view/fieldSelector.fxml"));
         Stage stage = new Stage();
         stage.setTitle("Mező választó");
@@ -74,8 +84,7 @@ public class ResultViewController {
         stage.show();
     }
 
-    private void startService(Class<? extends RemoteTask> clazz) {
-        RemoteService service = new RemoteService(tvResults.getItems(), clazz, getAuthHeader());
+    private void startService(RemoteService service) {
         busyVeil.visibleProperty().bind(service.runningProperty());
         progressIndicator.visibleProperty().bind(service.runningProperty());
         progressIndicator.progressProperty().bind(service.progressProperty());

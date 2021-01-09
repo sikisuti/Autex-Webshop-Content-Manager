@@ -12,4 +12,12 @@ public abstract class RemoteTask implements Callable<List<Product>> {
     protected List<Product> products;
     protected String authHeader;
     protected RemoteService parentService;
+
+    protected RemoteTask(HttpClient httpClient, List<Product> products, String getProductURL, String authHeader, RemoteService parentService) {
+        this.httpClient = httpClient;
+        this.products = products;
+        this.getProductURL = getProductURL;
+        this.authHeader = authHeader;
+        this.parentService = parentService;
+    }
 }
