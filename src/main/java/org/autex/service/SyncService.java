@@ -5,6 +5,7 @@ import org.apache.commons.collections4.ListUtils;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.autex.model.Product;
 import org.autex.task.SyncTask;
+import org.autex.util.Configuration;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -18,6 +19,7 @@ public class SyncService extends RemoteService {
     @Override
     protected void runTask(CloseableHttpClient httpClient, ExecutorService service) throws InterruptedException {
         List<List<Product>> groupedProducts = ListUtils.partition(products, 10);
-        service.invokeAll(groupedProducts.stream().map(productGroup -> new SyncTask(httpClient, products, getGetProductURL(), authHeader, this)).collect(Collectors.toList()));
+        String getProductURL = Configuration.getStringProperty("host") + Configuration.getStringProperty("productsPath");
+        service.invokeAll(groupedProducts.stream().map(productGroup -> new SyncTask(httpClient, products, getProductURL, authHeader, this)).collect(Collectors.toList()));
     }
 }

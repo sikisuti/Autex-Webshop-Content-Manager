@@ -8,16 +8,16 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 public abstract class RemoteTask implements Callable<List<Product>> {
-    protected String getProductURL;
+    protected String url;
     protected HttpClient httpClient;
     protected List<Product> products;
     protected String authHeader;
     protected RemoteService parentService;
 
-    protected RemoteTask(HttpClient httpClient, List<Product> products, String getProductURL, String authHeader, RemoteService parentService) {
+    protected RemoteTask(HttpClient httpClient, List<Product> products, String url, String authHeader, RemoteService parentService) {
         this.httpClient = httpClient;
         this.products = products;
-        this.getProductURL = getProductURL;
+        this.url = url;
         this.authHeader = authHeader;
         this.parentService = parentService;
     }

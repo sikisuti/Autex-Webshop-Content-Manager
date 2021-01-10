@@ -77,6 +77,10 @@ public class Product {
         return status;
     }
 
+    public String serialize(Set<String> selectedFields) {
+        return data.get(SKU).get();
+    }
+
     public enum Status {
         UNKNOWN,
         EXISTS,

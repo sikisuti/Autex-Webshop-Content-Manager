@@ -35,7 +35,7 @@ public class SyncTask extends RemoteTask {
     public List<Product> call() {
         HttpGet getProductRequest = new HttpGet();
         try {
-            getProductRequest.setURI(new URIBuilder(getProductURL)
+            getProductRequest.setURI(new URIBuilder(url)
                     .addParameter(SKU, products.stream().map(p -> p.getField(SKU)).collect(Collectors.joining(",")))
                     .build());
             getProductRequest.setHeader(HttpHeaders.AUTHORIZATION, authHeader);

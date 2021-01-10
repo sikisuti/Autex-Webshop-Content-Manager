@@ -68,9 +68,7 @@ public class ResultViewController {
     private void upload() {
         FieldSelectorDialog dialog = new FieldSelectorDialog(tvResults.getItems().get(0).getAllFields());
         Optional<Set<String>> selectedFields = dialog.showAndWait();
-        if (selectedFields.isPresent()) {
-            startService(new UploadService(tvResults.getItems(), getAuthHeader()));
-        }
+        selectedFields.ifPresent(strings -> startService(new UploadService(tvResults.getItems(), getAuthHeader(), strings)));
     }
 
     private void startService(RemoteService service) {

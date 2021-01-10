@@ -55,14 +55,6 @@ public abstract class RemoteService extends Task<ObservableList<Product>> {
 
     protected abstract void runTask(CloseableHttpClient httpClient, ExecutorService service) throws Exception;
 
-    protected String getGetProductURL() {
-        if (getProductURL == null) {
-            getProductURL = Configuration.getStringProperty("host") + Configuration.getStringProperty("productsPath");
-        }
-
-        return getProductURL;
-    }
-
     public void updateProgress(int increment) {
         synchronized (this) {
             count += increment;
