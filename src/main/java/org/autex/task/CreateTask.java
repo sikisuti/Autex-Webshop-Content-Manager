@@ -1,7 +1,18 @@
 package org.autex.task;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpHeaders;
+import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.util.EntityUtils;
+import org.autex.exception.CalloutException;
 import org.autex.model.Product;
 import org.autex.service.RemoteService;
 import org.slf4j.Logger;
@@ -24,10 +35,48 @@ public class CreateTask extends RemoteTask {
 
     @Override
     public List<Product> call() throws Exception {
-        for (Product product : products) {
-            LOGGER.info(product.serialize(selectedFields, objectMapper));
+        HttpPost newProductRequest = new HttpPost();
+        try {
+            newProductRequest.setURI(new URIBuilder(url).build());
+            newProductRequest.setHeader(HttpHeaders.AUTHORIZATION, authHeader);
+            newProductRequest.setHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.toString());
+            ObjectNode requestObject = objectMapper.createObjectNode();
+            ArrayNode createArray = objectMapper.createArrayNode();
+            ArrayNode updateArray = objectMapper.createArrayNode();
+            for (Product product : products) {
+                if (product.getStatus() == Product.Status.NEW) {
+                    createArray.add(product.toJsonObject(selectedFields, objectMapper));
+                } else if (product.getStatus() == Product.Status.EXISTS) {
+                    updateArray.add(product.toJsonObject(selectedFields, objectMapper));
+                }
+            }
+
+            if (!createArray.isEmpty()) {
+                requestObject.set("create", createArray);
+            }
+
+            if (!updateArray.isEmpty()) {
+                requestObject.set("update", updateArray);
+            }
+
+            LOGGER.info(requestObject.toPrettyString());
+
+            /*newProductRequest.setEntity(new StringEntity(requestObject.toString()));
+            HttpResponse response = httpClient.execute(newProductRequest);
+            HttpEntity entity = response.getEntity();
+            int statusCode = response.getStatusLine().getStatusCode();
+            EntityUtils.consumeQuietly(entity);
+            if (statusCode > 399) {
+                throw new CalloutException(statusCode, response.getStatusLine().getReasonPhrase());
+            }*/
+
+            products.forEach(p -> p.setStatus(Product.Status.UPLOADED));
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            products.forEach(p -> p.setStatus(Product.Status.ACCESS_FAILURE));
         }
 
+        parentService.updateProgress(products.size());
         return products;
     }
 }

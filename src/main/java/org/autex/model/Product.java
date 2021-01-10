@@ -83,11 +83,14 @@ public class Product {
     public Status getStatus() {
         return status.get();
     }
+    public void setStatus(Status status) {
+        this.status.set(status);
+    }
     public ObjectProperty<Status> statusProperty() {
         return status;
     }
 
-    public String serialize(Set<String> selectedFields, ObjectMapper objectMapper) {
+    public ObjectNode toJsonObject(Set<String> selectedFields, ObjectMapper objectMapper) {
         ObjectNode jsonObject = objectMapper.createObjectNode();
 
         for (String selectedField : selectedFields) {
@@ -96,14 +99,17 @@ public class Product {
             }
         }
 
-        return jsonObject.toString();
+        return jsonObject;
     }
 
     public enum Status {
-        UNKNOWN,
+        ACCESS_FAILURE,
+        CREATED,
         EXISTS,
         NEW,
-        ACCESS_FAILURE;
+        UNKNOWN,
+        UPDATED,
+        UPLOADED;
 
         @Override
         public String toString() {

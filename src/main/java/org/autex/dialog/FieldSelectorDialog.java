@@ -33,6 +33,7 @@ public class FieldSelectorDialog extends Dialog<Set<String>> {
             selectedFields.put(field, isSelected);
             CheckBox cb = new CheckBox(Translator.translate(field));
             cb.setId(field);
+            cb.setMnemonicParsing(false);
             isSelected.bindBidirectional(cb.selectedProperty());
             pane.getChildren().add(cb);
         }

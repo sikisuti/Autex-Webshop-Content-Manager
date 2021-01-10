@@ -24,9 +24,9 @@ public class UpdateTask extends RemoteTask {
 
     @Override
     public List<Product> call() throws Exception {
-        for (Product product : products) {
-            LOGGER.info(product.serialize(selectedFields, objectMapper));
-        }
+//        for (Product product : products) {
+//            LOGGER.info(product.toJsonObject(selectedFields, objectMapper));
+//        }
 
         return products;
     }

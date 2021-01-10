@@ -52,11 +52,11 @@ public class SyncTask extends RemoteTask {
             }
 
             EntityUtils.consumeQuietly(entity);
-            products.stream().filter(p -> p.statusProperty().get() == Product.Status.UNKNOWN).forEach(p -> p.statusProperty().set(Product.Status.NEW));
+            products.stream().filter(p -> p.getStatus() == Product.Status.UNKNOWN).forEach(p -> p.setStatus(Product.Status.NEW));
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             for (Product product : products) {
-                product.statusProperty().set(Product.Status.ACCESS_FAILURE);
+                product.setStatus(Product.Status.ACCESS_FAILURE);
             }
         }
 
@@ -103,7 +103,7 @@ public class SyncTask extends RemoteTask {
         if (sku != null && !sku.isEmpty()) {
             Optional<Product> product = products.stream().filter(p -> sku.equals(p.getSku())).findFirst();
             if (product.isPresent()) {
-                product.get().statusProperty().set(Product.Status.EXISTS);
+                product.get().setStatus(Product.Status.EXISTS);
                 if (product.get().getField(WEIGHT) == null && weight != null) {
                     product.get().setField(WEIGHT, weight);
                 }
