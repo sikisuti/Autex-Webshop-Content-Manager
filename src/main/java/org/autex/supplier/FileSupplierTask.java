@@ -38,12 +38,12 @@ public class FileSupplierTask extends SupplierTask {
                 XSSFRow row = sheet.getRow(rowIndex);
 
                 Product product = new Product();
-                Optional.ofNullable(row.getCell(0)).ifPresent(cell -> product.setField(Product.SKU, df.formatCellValue(cell)));
-                if (product.getField(Product.SKU) != null && !product.getField(Product.SKU).isEmpty()) {
-                    if (processedItems.contains(product.getField(Product.SKU))) {
-                        throw new DuplicateSkuException(product.getField(Product.SKU));
+                Optional.ofNullable(row.getCell(0)).ifPresent(cell -> product.setSku(df.formatCellValue(cell)));
+                if (product.getSku() != null && !product.getSku().isEmpty()) {
+                    if (processedItems.contains(product.getSku())) {
+                        throw new DuplicateSkuException(product.getSku());
                     } else {
-                        processedItems.add(product.getField(Product.SKU));
+                        processedItems.add(product.getSku());
                     }
                 } else {
                     continue;

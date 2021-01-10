@@ -1,5 +1,7 @@
 package org.autex.model;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import javafx.beans.property.*;
 import org.autex.util.Translator;
 
@@ -7,15 +9,15 @@ import java.util.*;
 
 public class Product {
     public static final String BRAND = "_brand";
-    public static final String ID = "id";
     public static final String NAME = "name";
     public static final String PRICE = "price";
-    public static final String SKU = "sku";
     public static final String STOCK_QUANTITY = "stock_quantity";
     public static final String WEIGHT = "weight";
 
     private final Map<String, SimpleStringProperty> data = new HashMap<>();
 
+    private StringProperty id = new SimpleStringProperty();
+    private StringProperty sku = new SimpleStringProperty();
     private final ObjectProperty<Status> status = new SimpleObjectProperty<>(Status.UNKNOWN);
 
     public void setField(String name, String value) {
@@ -38,20 +40,8 @@ public class Product {
         return data.keySet();
     }
 
-    public StringProperty idProperty() {
-        if (!data.containsKey(ID)) {
-            data.put(ID, new SimpleStringProperty());
-        }
-
-        return data.get(ID);
-    }
-
     public StringProperty nameProperty() {
         return data.get(NAME);
-    }
-
-    public StringProperty skuProperty() {
-        return data.get(SKU);
     }
 
     public StringProperty priceProperty() {
@@ -70,6 +60,26 @@ public class Product {
         return data.get(BRAND);
     }
 
+    public String getId() {
+        return this.id.get();
+    }
+    public void setId(String id) {
+        this.id.set(id);
+    }
+    public StringProperty idProperty() {
+        return id;
+    }
+
+    public String getSku() {
+        return this.sku.get();
+    }
+    public void setSku(String sku) {
+        this.sku.set(sku);
+    }
+    public StringProperty skuProperty() {
+        return sku;
+    }
+
     public Status getStatus() {
         return status.get();
     }
@@ -77,8 +87,16 @@ public class Product {
         return status;
     }
 
-    public String serialize(Set<String> selectedFields) {
-        return data.get(SKU).get();
+    public String serialize(Set<String> selectedFields, ObjectMapper objectMapper) {
+        ObjectNode jsonObject = objectMapper.createObjectNode();
+
+        for (String selectedField : selectedFields) {
+            if (data.containsKey(selectedField)) {
+                jsonObject.put(selectedField, data.get(selectedField).get());
+            }
+        }
+
+        return jsonObject.toString();
     }
 
     public enum Status {

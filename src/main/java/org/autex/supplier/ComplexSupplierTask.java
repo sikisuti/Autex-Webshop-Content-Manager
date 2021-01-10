@@ -75,12 +75,12 @@ public class ComplexSupplierTask extends SupplierTask {
                 XSSFRow rowFromAllItems = masterData.get(id);
                 if (rowFromAllItems != null) {
                     Product product = new Product();
-                    Optional.ofNullable(rowFromAllItems.getCell(0)).ifPresent(cell -> product.setField(Product.SKU, df.formatCellValue(cell)));
-                    if (product.getField(Product.SKU) != null && !product.getField(Product.SKU).isEmpty()) {
-                        if (processedItems.contains(product.getField(Product.SKU))) {
-                            throw new DuplicateSkuException(product.getField(Product.SKU) + " row: " + rowIndex);
+                    Optional.ofNullable(rowFromAllItems.getCell(0)).ifPresent(cell -> product.setSku(df.formatCellValue(cell)));
+                    if (product.getSku() != null && !product.getSku().isEmpty()) {
+                        if (processedItems.contains(product.getSku())) {
+                            throw new DuplicateSkuException(product.getSku() + " row: " + rowIndex);
                         } else {
-                            processedItems.add(product.getField(Product.SKU));
+                            processedItems.add(product.getSku());
                         }
                     } else {
                         continue;
@@ -92,17 +92,12 @@ public class ComplexSupplierTask extends SupplierTask {
                     Optional.ofNullable(row.getCell(3)).ifPresent(cell -> product.setField(Product.STOCK_QUANTITY, df.formatCellValue(cell)));
 
                     content.add(product);
-                    LOGGER.info("Product merged: {}", product.getField(Product.SKU));
+                    LOGGER.info("Product merged: {}", product.getSku());
                 }
 
                 updateProgress(rowIndex, sheet.getLastRowNum());
             }
 
-            updateTitle("4/4 Szinkronizálás a webshop-al");
-            updateProgress(0, 1);
-//            syncProducts(content);
-
-            updateTitle(null);
             return content;
         }
     }

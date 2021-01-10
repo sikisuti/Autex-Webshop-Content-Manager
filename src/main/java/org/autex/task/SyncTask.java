@@ -36,7 +36,7 @@ public class SyncTask extends RemoteTask {
         HttpGet getProductRequest = new HttpGet();
         try {
             getProductRequest.setURI(new URIBuilder(url)
-                    .addParameter(SKU, products.stream().map(p -> p.getField(SKU)).collect(Collectors.joining(",")))
+                    .addParameter("sku", products.stream().map(Product::getSku).collect(Collectors.joining(",")))
                     .build());
             getProductRequest.setHeader(HttpHeaders.AUTHORIZATION, authHeader);
             HttpResponse response = httpClient.execute(getProductRequest);
@@ -101,15 +101,15 @@ public class SyncTask extends RemoteTask {
 
     private void adjustProduct(List<Product> products, String weight, Long id, String sku) {
         if (sku != null && !sku.isEmpty()) {
-            Optional<Product> product = products.stream().filter(p -> sku.equals(p.getField(SKU))).findFirst();
+            Optional<Product> product = products.stream().filter(p -> sku.equals(p.getSku())).findFirst();
             if (product.isPresent()) {
                 product.get().statusProperty().set(Product.Status.EXISTS);
                 if (product.get().getField(WEIGHT) == null && weight != null) {
                     product.get().setField(WEIGHT, weight);
                 }
 
-                if (product.get().getField(ID) == null && id != null) {
-                    product.get().setField(ID, String.valueOf(id));
+                if (product.get().getId() == null && id != null) {
+                    product.get().setId(String.valueOf(id));
                 }
             }
         }

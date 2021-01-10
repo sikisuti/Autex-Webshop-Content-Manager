@@ -1,5 +1,7 @@
 package org.autex.controller;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -38,6 +40,7 @@ public class ResultViewController {
         progressIndicator.progressProperty().bind(task.progressProperty());
         lbProgressMessage.textProperty().bind(task.titleProperty());
         tvResults.itemsProperty().bind(task.valueProperty());
+        task.valueProperty().addListener((observableValue, products, t1) -> startService(new SyncService(tvResults.getItems(), getAuthHeader())));
         supplierName = task.getClass().getName();
         task.exceptionProperty().addListener((observableValue, throwable, t1) -> {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -106,7 +109,7 @@ public class ResultViewController {
             for (int i = 0; i < products.size(); i++) {
                 Product product = products.get(i);
                 Row rowData = sheet.createRow(i + 1);
-                rowData.createCell(0).setCellValue(product.getField(Product.SKU));
+                rowData.createCell(0).setCellValue(product.getSku());
                 rowData.createCell(1).setCellValue(product.getField(Product.NAME));
                 rowData.createCell(2).setCellValue(product.getField(Product.PRICE));
                 rowData.createCell(3).setCellValue(product.getField(Product.STOCK_QUANTITY));

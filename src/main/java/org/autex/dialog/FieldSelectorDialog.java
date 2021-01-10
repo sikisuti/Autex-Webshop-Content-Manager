@@ -40,10 +40,8 @@ public class FieldSelectorDialog extends Dialog<Set<String>> {
         Button btnOK = (Button) getDialogPane().lookupButton(okButtonType);
         btnOK.addEventFilter(ActionEvent.ACTION, this::checkInput);
 
-
-
         setResultConverter(dialogButton -> {
-            if (dialogButton == ButtonType.OK) {
+            if (dialogButton == okButtonType) {
                 return selectedFields.entrySet().stream()
                         .filter(f -> f.getValue().get())
                         .map(Map.Entry::getKey).collect(Collectors.toSet());

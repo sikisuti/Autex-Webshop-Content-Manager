@@ -18,8 +18,9 @@ public class SyncService extends RemoteService {
 
     @Override
     protected void runTask(CloseableHttpClient httpClient, ExecutorService service) throws InterruptedException {
+        updateTitle("Szinkronizálás a Webshop-al");
         List<List<Product>> groupedProducts = ListUtils.partition(products, 10);
         String getProductURL = Configuration.getStringProperty("host") + Configuration.getStringProperty("productsPath");
-        service.invokeAll(groupedProducts.stream().map(productGroup -> new SyncTask(httpClient, products, getProductURL, authHeader, this)).collect(Collectors.toList()));
+        service.invokeAll(groupedProducts.stream().map(productGroup -> new SyncTask(httpClient, productGroup, getProductURL, authHeader, this)).collect(Collectors.toList()));
     }
 }
