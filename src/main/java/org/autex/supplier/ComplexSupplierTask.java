@@ -11,6 +11,7 @@ import javafx.collections.ObservableList;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.xssf.usermodel.*;
 import org.autex.exception.DuplicateSkuException;
+import org.autex.exception.UnrecognizableGroupException;
 import org.autex.model.Product;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,10 +21,17 @@ public class ComplexSupplierTask extends SupplierTask {
 
     private final File masterDataFile;
     private final File stockFile;
+    private final Properties categories;
 
     public ComplexSupplierTask(File masterDataFile, File stockFile) {
         this.masterDataFile = masterDataFile;
         this.stockFile = stockFile;
+        this.categories = new Properties();
+
+        try (FileInputStream fis = new FileInputStream("complex.properties")) {
+            this.categories.load(fis);
+        } catch (Exception ignored) {
+        }
     }
 
     @Override
@@ -72,9 +80,9 @@ public class ComplexSupplierTask extends SupplierTask {
                     break;
                 }
 
-                XSSFRow rowFromAllItems = masterData.get(id);
-                if (rowFromAllItems != null) {
-                    XSSFCell skuCell = rowFromAllItems.getCell(0);
+                XSSFRow rowFromMasterData = masterData.get(id);
+                if (rowFromMasterData != null) {
+                    XSSFCell skuCell = rowFromMasterData.getCell(0);
                     if (skuCell != null) {
                         Product product = new Product(df.formatCellValue(skuCell));
                         if (processedItems.contains(product.getSku())) {
@@ -84,9 +92,15 @@ public class ComplexSupplierTask extends SupplierTask {
                         }
 
                         product.setField(Product.NAME, id);
-                        Optional.ofNullable(rowFromAllItems.getCell(4)).ifPresent(cell -> product.setField(Product.PRICE, df.formatCellValue(cell)));
+                        Optional.ofNullable(rowFromMasterData.getCell(4)).ifPresent(cell -> product.setField(Product.PRICE, df.formatCellValue(cell)));
                         Optional.ofNullable(row.getCell(1)).ifPresent(cell -> product.setField(Product.BRAND, df.formatCellValue(cell)));
                         Optional.ofNullable(row.getCell(3)).ifPresent(cell -> product.setField(Product.STOCK_QUANTITY, Integer.parseInt(df.formatCellValue(cell))));
+
+                        try {
+                            Optional.ofNullable(rowFromMasterData.getCell(5)).ifPresent(cell -> product.setField(Product.CATEGORY, parseCategories(df.formatCellValue(cell))));
+                        } catch (UnrecognizableGroupException e) {
+                            LOGGER.error(e.getMessage(), e);
+                        }
 
                         content.add(product);
                     }
@@ -97,5 +111,21 @@ public class ComplexSupplierTask extends SupplierTask {
 
             return content;
         }
+    }
+
+    private String parseCategories(String groupCode) {
+        List<String> categoryList = new ArrayList<>();
+        int i = 0;
+        while (i * 2 < groupCode.length()) {
+            categoryList.add(parseGroupCode(i + 1, groupCode.substring(i * 2, (i * 2) + 2)));
+            i++;
+        }
+
+        return String.join(".", categoryList);
+    }
+
+    private String parseGroupCode(int level, String groupCode) {
+        return Optional.ofNullable(categories.getProperty(level + groupCode))
+                .orElseThrow(() -> new UnrecognizableGroupException(level + groupCode));
     }
 }

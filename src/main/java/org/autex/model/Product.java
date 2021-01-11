@@ -10,6 +10,7 @@ import java.util.*;
 
 public class Product {
     public static final String BRAND = "_brand";
+    public static final String CATEGORY = "category";
     public static final String ID = "id";
     public static final String NAME = "name";
     public static final String PRICE = "regular_price";
@@ -71,6 +72,14 @@ public class Product {
         return fieldNames;
     }
 
+    public StringProperty brandProperty() {
+        return stringData.get(BRAND);
+    }
+
+    public StringProperty categoryProperty() {
+        return stringData.get(CATEGORY);
+    }
+
     public StringProperty nameProperty() {
         return stringData.get(NAME);
     }
@@ -85,10 +94,6 @@ public class Product {
 
     public StringProperty weightProperty() {
         return stringData.get(WEIGHT);
-    }
-
-    public StringProperty brandProperty() {
-        return stringData.get(BRAND);
     }
 
     public Long getIdField() {

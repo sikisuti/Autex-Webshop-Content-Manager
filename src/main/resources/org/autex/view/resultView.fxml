@@ -44,6 +44,11 @@
                         <PropertyValueFactory property="brand" />
                     </cellValueFactory>
                 </TableColumn>
+                <TableColumn fx:id="colCategory" text="Kategória">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="category" />
+                    </cellValueFactory>
+                </TableColumn>
                 <TableColumn fx:id="colStatus" text="Állapot">
                     <cellValueFactory>
                         <PropertyValueFactory property="status" />
