@@ -129,19 +129,29 @@ public class Product {
         }
 
         ArrayNode metaData = objectMapper.createArrayNode();
+        ObjectNode gwsMetasValue = objectMapper.createObjectNode();
         for (String selectedField : selectedFields) {
             if (stringData.containsKey(selectedField) && stringData.get(selectedField).get() != null && !stringData.get(selectedField).get().isBlank()) {
                 if (BRAND.equals(selectedField)) {
-                    ObjectNode brandObject = objectMapper.createObjectNode();
-                    brandObject.put("key", BRAND);
-                    brandObject.put("value", stringData.get(BRAND).getValue());
-                    metaData.add(brandObject);
+                    addBrand(objectMapper, metaData, gwsMetasValue);
                 } else {
                     jsonObject.put(selectedField, stringData.get(selectedField).get());
                 }
             } else if (integerData.containsKey(selectedField) && integerData.get(selectedField).get() != null) {
-                jsonObject.put(selectedField, integerData.get(selectedField).get());
+                if (STOCK_QUANTITY.equals(selectedField)) {
+                    jsonObject.put(STOCK_QUANTITY, integerData.get(STOCK_QUANTITY).get());
+                    jsonObject.put("manage_stock", true);
+                } else {
+                    jsonObject.put(selectedField, integerData.get(selectedField).get());
+                }
             }
+        }
+
+        if (!gwsMetasValue.isEmpty()) {
+            ObjectNode gwsMetas = objectMapper.createObjectNode();
+            gwsMetas.put("key", "_gws_es_metas");
+            gwsMetas.set("value", gwsMetasValue);
+            metaData.add(gwsMetas);
         }
 
         if (!metaData.isEmpty()) {
@@ -149,6 +159,14 @@ public class Product {
         }
 
         return jsonObject;
+    }
+
+    private void addBrand(ObjectMapper objectMapper, ArrayNode metaData, ObjectNode gwsMetasValue) {
+        ObjectNode brandObject = objectMapper.createObjectNode();
+        brandObject.put("key", BRAND);
+        brandObject.put("value", stringData.get(BRAND).getValue());
+        metaData.add(brandObject);
+        gwsMetasValue.put("brand", stringData.get(BRAND).getValue());
     }
 
     public boolean isReadyToUpload() {
