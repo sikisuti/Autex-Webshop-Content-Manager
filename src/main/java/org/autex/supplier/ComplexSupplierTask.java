@@ -74,25 +74,22 @@ public class ComplexSupplierTask extends SupplierTask {
 
                 XSSFRow rowFromAllItems = masterData.get(id);
                 if (rowFromAllItems != null) {
-                    Product product = new Product();
-                    Optional.ofNullable(rowFromAllItems.getCell(0)).ifPresent(cell -> product.setSku(df.formatCellValue(cell)));
-                    if (product.getSku() != null && !product.getSku().isEmpty()) {
+                    XSSFCell skuCell = rowFromAllItems.getCell(0);
+                    if (skuCell != null) {
+                        Product product = new Product(df.formatCellValue(skuCell));
                         if (processedItems.contains(product.getSku())) {
                             throw new DuplicateSkuException(product.getSku() + " row: " + rowIndex);
                         } else {
                             processedItems.add(product.getSku());
                         }
-                    } else {
-                        continue;
+
+                        product.setField(Product.NAME, id);
+                        Optional.ofNullable(rowFromAllItems.getCell(4)).ifPresent(cell -> product.setField(Product.PRICE, df.formatCellValue(cell)));
+                        Optional.ofNullable(row.getCell(1)).ifPresent(cell -> product.setField(Product.BRAND, df.formatCellValue(cell)));
+                        Optional.ofNullable(row.getCell(3)).ifPresent(cell -> product.setField(Product.STOCK_QUANTITY, df.formatCellValue(cell)));
+
+                        content.add(product);
                     }
-
-                    product.setField(Product.NAME, id);
-                    Optional.ofNullable(rowFromAllItems.getCell(4)).ifPresent(cell -> product.setField(Product.PRICE, df.formatCellValue(cell)));
-                    Optional.ofNullable(row.getCell(1)).ifPresent(cell -> product.setField(Product.BRAND, df.formatCellValue(cell)));
-                    Optional.ofNullable(row.getCell(3)).ifPresent(cell -> product.setField(Product.STOCK_QUANTITY, df.formatCellValue(cell)));
-
-                    content.add(product);
-                    LOGGER.info("Product merged: {}", product.getSku());
                 }
 
                 updateProgress(rowIndex, sheet.getLastRowNum());

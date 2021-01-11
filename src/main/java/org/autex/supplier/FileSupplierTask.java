@@ -3,6 +3,7 @@ package org.autex.supplier;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -37,25 +38,23 @@ public class FileSupplierTask extends SupplierTask {
             for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
                 XSSFRow row = sheet.getRow(rowIndex);
 
-                Product product = new Product();
-                Optional.ofNullable(row.getCell(0)).ifPresent(cell -> product.setSku(df.formatCellValue(cell)));
-                if (product.getSku() != null && !product.getSku().isEmpty()) {
+                XSSFCell skuCell = row.getCell(0);
+                if (skuCell != null) {
+                    Product product = new Product(df.formatCellValue(skuCell));
                     if (processedItems.contains(product.getSku())) {
                         throw new DuplicateSkuException(product.getSku());
                     } else {
                         processedItems.add(product.getSku());
                     }
-                } else {
-                    continue;
+
+                    Optional.ofNullable(row.getCell(1)).ifPresent(cell -> product.setField(Product.NAME, df.formatCellValue(cell)));
+                    Optional.ofNullable(row.getCell(2)).ifPresent(cell -> product.setField(Product.PRICE, df.formatCellValue(cell)));
+                    Optional.ofNullable(row.getCell(3)).ifPresent(cell -> product.setField(Product.STOCK_QUANTITY, df.formatCellValue(cell)));
+                    Optional.ofNullable(row.getCell(4)).ifPresent(cell -> product.setField(Product.WEIGHT, df.formatCellValue(cell)));
+                    Optional.ofNullable(row.getCell(5)).ifPresent(cell -> product.setField(Product.BRAND, df.formatCellValue(cell)));
+
+                    content.add(product);
                 }
-
-                Optional.ofNullable(row.getCell(1)).ifPresent(cell -> product.setField(Product.NAME, df.formatCellValue(cell)));
-                Optional.ofNullable(row.getCell(2)).ifPresent(cell -> product.setField(Product.PRICE, df.formatCellValue(cell)));
-                Optional.ofNullable(row.getCell(3)).ifPresent(cell -> product.setField(Product.STOCK_QUANTITY, df.formatCellValue(cell)));
-                Optional.ofNullable(row.getCell(4)).ifPresent(cell -> product.setField(Product.WEIGHT, df.formatCellValue(cell)));
-                Optional.ofNullable(row.getCell(5)).ifPresent(cell -> product.setField(Product.BRAND, df.formatCellValue(cell)));
-
-                content.add(product);
                 updateProgress(rowIndex, sheet.getLastRowNum());
             }
 

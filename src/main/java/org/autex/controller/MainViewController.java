@@ -42,6 +42,8 @@ public class MainViewController {
         Stage stage = new Stage();
         stage.setTitle("Generált csv");
         stage.setScene(new Scene(loader.load()));
+        stage.initOwner(rootPane.getScene().getWindow());
+        stage.initModality(Modality.APPLICATION_MODAL);
         ResultViewController resultViewController = loader.getController();
         resultViewController.convert(cmbSupplierPicker.getValue().controller.getConversionTask());
         stage.show();

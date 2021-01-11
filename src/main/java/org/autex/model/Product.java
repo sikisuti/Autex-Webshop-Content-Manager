@@ -9,16 +9,22 @@ import java.util.*;
 
 public class Product {
     public static final String BRAND = "_brand";
+    public static final String ID = "id";
     public static final String NAME = "name";
     public static final String PRICE = "price";
+    public static final String SKU = "sku";
     public static final String STOCK_QUANTITY = "stock_quantity";
     public static final String WEIGHT = "weight";
 
     private final Map<String, SimpleStringProperty> data = new HashMap<>();
 
     private StringProperty id = new SimpleStringProperty();
-    private StringProperty sku = new SimpleStringProperty();
+    private final String sku;
     private final ObjectProperty<Status> status = new SimpleObjectProperty<>(Status.UNKNOWN);
+
+    public Product(String sku) {
+        this.sku = sku;
+    }
 
     public void setField(String name, String value) {
         if (data.containsKey(name)) {
@@ -71,13 +77,7 @@ public class Product {
     }
 
     public String getSku() {
-        return this.sku.get();
-    }
-    public void setSku(String sku) {
-        this.sku.set(sku);
-    }
-    public StringProperty skuProperty() {
-        return sku;
+        return this.sku;
     }
 
     public Status getStatus() {
@@ -90,8 +90,18 @@ public class Product {
         return status;
     }
 
+    public ObjectNode toJsonObject(ObjectMapper objectMapper) {
+        return toJsonObject(getAllFields(), objectMapper);
+    }
+
     public ObjectNode toJsonObject(Set<String> selectedFields, ObjectMapper objectMapper) {
         ObjectNode jsonObject = objectMapper.createObjectNode();
+
+        if (getStatus() == Status.EXISTS) {
+            jsonObject.put(ID, getId());
+        } else if (getStatus() == Status.NEW) {
+            jsonObject.put(SKU, getSku());
+        }
 
         for (String selectedField : selectedFields) {
             if (data.containsKey(selectedField)) {
@@ -100,6 +110,10 @@ public class Product {
         }
 
         return jsonObject;
+    }
+
+    public boolean isReadyToUpload() {
+        return getStatus() == Status.NEW || getStatus() == Status.EXISTS;
     }
 
     public enum Status {

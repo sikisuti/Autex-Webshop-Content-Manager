@@ -2,10 +2,7 @@ package org.autex.supplier;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.apache.poi.hssf.usermodel.HSSFDataFormatter;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.usermodel.*;
 import org.autex.model.Product;
 
 import java.io.File;
@@ -30,12 +27,13 @@ public class AutexSupplierTask extends SupplierTask {
             HSSFDataFormatter df = new HSSFDataFormatter(new Locale("hu"));
             for (int rowIndex = 7; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
                 HSSFRow row = sheet.getRow(rowIndex);
+
+                HSSFCell skuCell = row.getCell(0);
                 if (row.getCell(0) == null) {
                     break;
                 }
 
-                Product product = new Product();
-                Optional.ofNullable(row.getCell(0)).ifPresent(cell -> product.setSku(df.formatCellValue(cell)));
+                Product product = new Product(df.formatCellValue(skuCell));
                 Optional.ofNullable(row.getCell(3)).ifPresent(cell -> product.setField(Product.NAME, df.formatCellValue(cell)));
                 Optional.ofNullable(row.getCell(8)).ifPresent(cell -> product.setField(Product.STOCK_QUANTITY, df.formatCellValue(cell)));
                 Optional.ofNullable(row.getCell(15)).ifPresent(cell -> product.setField(Product.PRICE, df.formatCellValue(cell)));

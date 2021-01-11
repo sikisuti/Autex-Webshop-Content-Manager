@@ -21,20 +21,20 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Set;
 
-public class CreateTask extends RemoteTask {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CreateTask.class);
+public class UploadTask extends RemoteTask {
+    private static final Logger LOGGER = LoggerFactory.getLogger(UploadTask.class);
 
     private final Set<String> selectedFields;
     private final ObjectMapper objectMapper;
 
-    public CreateTask(HttpClient httpClient, List<Product> products, String newProductURL, String authHeader, RemoteService parentService, Set<String> selectedFields, ObjectMapper objectMapper) {
+    public UploadTask(HttpClient httpClient, List<Product> products, String newProductURL, String authHeader, RemoteService parentService, Set<String> selectedFields, ObjectMapper objectMapper) {
         super(httpClient, products, newProductURL, authHeader, parentService);
         this.selectedFields = selectedFields;
         this.objectMapper = objectMapper;
     }
 
     @Override
-    public List<Product> call() throws Exception {
+    public List<Product> call() {
         HttpPost newProductRequest = new HttpPost();
         try {
             newProductRequest.setURI(new URIBuilder(url).build());
@@ -45,7 +45,7 @@ public class CreateTask extends RemoteTask {
             ArrayNode updateArray = objectMapper.createArrayNode();
             for (Product product : products) {
                 if (product.getStatus() == Product.Status.NEW) {
-                    createArray.add(product.toJsonObject(selectedFields, objectMapper));
+                    createArray.add(product.toJsonObject(objectMapper));
                 } else if (product.getStatus() == Product.Status.EXISTS) {
                     updateArray.add(product.toJsonObject(selectedFields, objectMapper));
                 }
@@ -61,14 +61,14 @@ public class CreateTask extends RemoteTask {
 
             LOGGER.info(requestObject.toPrettyString());
 
-            /*newProductRequest.setEntity(new StringEntity(requestObject.toString()));
+            newProductRequest.setEntity(new StringEntity(requestObject.toString()));
             HttpResponse response = httpClient.execute(newProductRequest);
             HttpEntity entity = response.getEntity();
             int statusCode = response.getStatusLine().getStatusCode();
             EntityUtils.consumeQuietly(entity);
             if (statusCode > 399) {
                 throw new CalloutException(statusCode, response.getStatusLine().getReasonPhrase());
-            }*/
+            }
 
             products.forEach(p -> p.setStatus(Product.Status.UPLOADED));
         } catch (Exception e) {

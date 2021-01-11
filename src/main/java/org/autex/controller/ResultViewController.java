@@ -42,15 +42,17 @@ public class ResultViewController {
         tvResults.itemsProperty().bind(task.valueProperty());
         task.valueProperty().addListener((observableValue, products, t1) -> startService(new SyncService(tvResults.getItems(), getAuthHeader())));
         supplierName = task.getClass().getName();
-        task.exceptionProperty().addListener((observableValue, throwable, t1) -> {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Hiba");
-            alert.setHeaderText(null);
-            alert.setContentText(t1.getMessage());
-            alert.showAndWait();
-        });
+        task.exceptionProperty().addListener((observableValue, throwable, t1) -> showAlert(t1.getMessage()));
 
         new Thread(task).start();
+    }
+
+    private void showAlert(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Hiba");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
     @FXML
@@ -69,6 +71,11 @@ public class ResultViewController {
 
     @FXML
     private void upload() {
+        if (tvResults.getItems().stream().anyMatch(p -> !p.isReadyToUpload())) {
+            showAlert("Szinkronizálatlan elemek vannak a listában");
+            return;
+        }
+
         FieldSelectorDialog dialog = new FieldSelectorDialog(tvResults.getItems().get(0).getAllFields());
         Optional<Set<String>> selectedFields = dialog.showAndWait();
         selectedFields.ifPresent(strings -> startService(new UploadService(tvResults.getItems(), getAuthHeader(), strings)));

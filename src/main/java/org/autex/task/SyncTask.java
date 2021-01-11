@@ -47,6 +47,10 @@ public class SyncTask extends RemoteTask {
                 throw new CalloutException(statusCode, response.getStatusLine().getReasonPhrase());
             }
 
+            products.forEach(p -> {
+                p.setId(null);
+                p.setStatus(Status.UNKNOWN);
+            });
             try (InputStream responseStream = entity.getContent()) {
                 parseResponse(responseStream, products);
             }
