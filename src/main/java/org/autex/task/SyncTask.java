@@ -48,7 +48,7 @@ public class SyncTask extends RemoteTask {
             }
 
             products.forEach(p -> {
-                p.setId(null);
+                p.setIdField(null);
                 p.setStatus(Status.UNKNOWN);
             });
             try (InputStream responseStream = entity.getContent()) {
@@ -112,8 +112,8 @@ public class SyncTask extends RemoteTask {
                     product.get().setField(WEIGHT, weight);
                 }
 
-                if (product.get().getId() == null && id != null) {
-                    product.get().setId(String.valueOf(id));
+                if (product.get().getIdField() == null && id != null) {
+                    product.get().setIdField(id);
                 }
             }
         }

@@ -29,12 +29,12 @@ public class FieldSelectorDialog extends Dialog<Set<String>> {
         pane.setSpacing(10);
         getDialogPane().setContent(pane);
         for (String field : allFields) {
-            BooleanProperty isSelected = new SimpleBooleanProperty(false);
+            BooleanProperty isSelected = new SimpleBooleanProperty(true);
             selectedFields.put(field, isSelected);
             CheckBox cb = new CheckBox(Translator.translate(field));
             cb.setId(field);
             cb.setMnemonicParsing(false);
-            isSelected.bindBidirectional(cb.selectedProperty());
+            cb.selectedProperty().bindBidirectional(isSelected);
             pane.getChildren().add(cb);
         }
 

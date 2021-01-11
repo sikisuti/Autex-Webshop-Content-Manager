@@ -70,7 +70,7 @@ public class UploadTask extends RemoteTask {
                 throw new CalloutException(statusCode, response.getStatusLine().getReasonPhrase());
             }
 
-            products.forEach(p -> p.setStatus(Product.Status.UPLOADED));
+            products.forEach(p -> p.setStatus(Product.Status.EXISTS));
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             products.forEach(p -> p.setStatus(Product.Status.ACCESS_FAILURE));

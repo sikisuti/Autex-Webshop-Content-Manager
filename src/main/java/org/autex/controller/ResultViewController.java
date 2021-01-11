@@ -1,7 +1,5 @@
 package org.autex.controller;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -76,7 +74,7 @@ public class ResultViewController {
             return;
         }
 
-        FieldSelectorDialog dialog = new FieldSelectorDialog(tvResults.getItems().get(0).getAllFields());
+        FieldSelectorDialog dialog = new FieldSelectorDialog(tvResults.getItems().get(0).getAllFieldNames());
         Optional<Set<String>> selectedFields = dialog.showAndWait();
         selectedFields.ifPresent(strings -> startService(new UploadService(tvResults.getItems(), getAuthHeader(), strings)));
     }
@@ -119,7 +117,7 @@ public class ResultViewController {
                 rowData.createCell(0).setCellValue(product.getSku());
                 rowData.createCell(1).setCellValue(product.getField(Product.NAME));
                 rowData.createCell(2).setCellValue(product.getField(Product.PRICE));
-                rowData.createCell(3).setCellValue(product.getField(Product.STOCK_QUANTITY));
+                rowData.createCell(3).setCellValue(product.getField(Product.STOCK_QUANTITY, Integer.class));
                 rowData.createCell(4).setCellValue(product.getField(Product.WEIGHT));
                 rowData.createCell(5).setCellValue(product.getField(Product.BRAND));
             }
