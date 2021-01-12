@@ -116,16 +116,26 @@ public class ComplexSupplierTask extends SupplierTask {
     private String parseCategories(String groupCode) {
         List<String> categoryList = new ArrayList<>();
         int i = 0;
-        while (i * 2 < groupCode.length()) {
-            categoryList.add(parseGroupCode(i + 1, groupCode.substring(i * 2, (i * 2) + 2)));
+        while (i * 2 < groupCode.length() && i < 4) {
+            categoryList.add(parseGroupCode(groupCode.substring(0, (i * 2) + 2)));
             i++;
+        }
+
+        if (groupCode.length() > 9) {
+            categoryList.add(parseGroupCode("-" + groupCode.substring(8, 10)));
         }
 
         return String.join(".", categoryList);
     }
 
-    private String parseGroupCode(int level, String groupCode) {
-        return Optional.ofNullable(categories.getProperty(level + groupCode))
-                .orElseThrow(() -> new UnrecognizableGroupException(level + groupCode));
+    private String parseGroupCode(String groupCode) {
+        String category = categories.getProperty(groupCode);
+        if (category != null) {
+            return category;
+        } else {
+            category = categories.getProperty("-" + groupCode.substring(groupCode.length() - 2));
+            return Optional.ofNullable(category)
+                    .orElseThrow(() -> new UnrecognizableGroupException(groupCode));
+        }
     }
 }
