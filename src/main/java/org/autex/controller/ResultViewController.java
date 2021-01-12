@@ -38,7 +38,7 @@ public class ResultViewController {
         progressIndicator.progressProperty().bind(task.progressProperty());
         lbProgressMessage.textProperty().bind(task.titleProperty());
         tvResults.itemsProperty().bind(task.valueProperty());
-        task.valueProperty().addListener((observableValue, products, t1) -> startService(new SyncService(tvResults.getItems(), getAuthHeader())));
+//        task.valueProperty().addListener((observableValue, products, t1) -> startService(new SyncService(tvResults.getItems(), getAuthHeader())));
         supplierName = task.getClass().getName();
         task.exceptionProperty().addListener((observableValue, throwable, t1) -> showAlert(t1.getMessage()));
 

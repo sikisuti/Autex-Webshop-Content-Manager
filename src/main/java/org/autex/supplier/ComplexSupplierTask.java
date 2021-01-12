@@ -1,9 +1,8 @@
 package org.autex.supplier;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import javafx.collections.FXCollections;
@@ -28,8 +27,9 @@ public class ComplexSupplierTask extends SupplierTask {
         this.stockFile = stockFile;
         this.categories = new Properties();
 
-        try (FileInputStream fis = new FileInputStream("complex.properties")) {
-            this.categories.load(fis);
+        try (FileInputStream fis = new FileInputStream("complex.properties");
+             InputStreamReader input = new InputStreamReader(fis, StandardCharsets.UTF_8)) {
+            this.categories.load(input);
         } catch (Exception ignored) {
         }
     }
