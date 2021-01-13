@@ -116,13 +116,9 @@ public class ComplexSupplierTask extends SupplierTask {
     private String parseCategories(String groupCode) {
         List<String> categoryList = new ArrayList<>();
         int i = 0;
-        while (i * 2 < groupCode.length() && i < 4) {
+        while (i * 2 < groupCode.length()) {
             categoryList.add(parseGroupCode(groupCode.substring(0, (i * 2) + 2)));
             i++;
-        }
-
-        if (groupCode.length() > 9) {
-            categoryList.add(parseGroupCode("-" + groupCode.substring(8, 10)));
         }
 
         return String.join(".", categoryList);
