@@ -22,12 +22,17 @@ public class Product {
     private final Map<String, ObjectProperty<Integer>> integerData = new HashMap<>();
 
     private final ObjectProperty<Long> idField = new SimpleObjectProperty<>();
-    private final String skuField;
+    private String skuField;
     private final ObjectProperty<Status> status = new SimpleObjectProperty<>(Status.UNKNOWN);
+
+    private Product remoteInstance;
 
     public Product(String skuField) {
         this.skuField = skuField;
+        this.remoteInstance = new Product();
     }
+
+    public Product() {}
 
     public void setField(String name, String value) {
         if (stringData.containsKey(name)) {
@@ -118,6 +123,10 @@ public class Product {
     }
     public ObjectProperty<Status> statusProperty() {
         return status;
+    }
+
+    public Product getRemoteInstance() {
+        return remoteInstance;
     }
 
     public ObjectNode toJsonObject(ObjectMapper objectMapper) {

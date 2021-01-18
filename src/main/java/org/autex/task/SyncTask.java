@@ -108,13 +108,8 @@ public class SyncTask extends RemoteTask {
             Optional<Product> product = products.stream().filter(p -> sku.equals(p.getSku())).findFirst();
             if (product.isPresent()) {
                 product.get().setStatus(Product.Status.EXISTS);
-                if (product.get().getField(WEIGHT) == null && weight != null) {
-                    product.get().setField(WEIGHT, weight);
-                }
-
-                if (product.get().getIdField() == null && id != null) {
-                    product.get().setIdField(id);
-                }
+                product.get().getRemoteInstance().setField(WEIGHT, weight);
+                product.get().setIdField(id);
             }
         }
     }

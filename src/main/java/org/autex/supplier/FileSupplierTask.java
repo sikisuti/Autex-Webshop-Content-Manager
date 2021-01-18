@@ -52,6 +52,7 @@ public class FileSupplierTask extends SupplierTask {
                     Optional.ofNullable(row.getCell(3)).ifPresent(cell -> product.setField(Product.STOCK_QUANTITY, Integer.parseInt(df.formatCellValue(cell))));
                     Optional.ofNullable(row.getCell(4)).ifPresent(cell -> product.setField(Product.WEIGHT, df.formatCellValue(cell)));
                     Optional.ofNullable(row.getCell(5)).ifPresent(cell -> product.setField(Product.BRAND, df.formatCellValue(cell)));
+                    Optional.ofNullable(row.getCell(6)).ifPresent(cell -> product.setField(Product.CATEGORY, df.formatCellValue(cell)));
 
                     content.add(product);
                 }

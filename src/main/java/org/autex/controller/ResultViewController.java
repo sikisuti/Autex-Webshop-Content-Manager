@@ -38,7 +38,7 @@ public class ResultViewController {
         progressIndicator.progressProperty().bind(task.progressProperty());
         lbProgressMessage.textProperty().bind(task.titleProperty());
         tvResults.itemsProperty().bind(task.valueProperty());
-//        task.valueProperty().addListener((observableValue, products, t1) -> startService(new SyncService(tvResults.getItems(), getAuthHeader())));
+        task.valueProperty().addListener((observableValue, products, t1) -> startService(new SyncService(tvResults.getItems(), getAuthHeader())));
         supplierName = task.getClass().getName();
         task.exceptionProperty().addListener((observableValue, throwable, t1) -> showAlert(t1.getMessage()));
 
@@ -110,6 +110,7 @@ public class ResultViewController {
             rowHeader.createCell(3).setCellValue("Készlet");
             rowHeader.createCell(4).setCellValue("Súly");
             rowHeader.createCell(5).setCellValue("Gyártó");
+            rowHeader.createCell(6).setCellValue("Kategóriák");
 
             for (int i = 0; i < products.size(); i++) {
                 Product product = products.get(i);
@@ -120,10 +121,11 @@ public class ResultViewController {
                 rowData.createCell(3).setCellValue(product.getField(Product.STOCK_QUANTITY, Integer.class));
                 rowData.createCell(4).setCellValue(product.getField(Product.WEIGHT));
                 rowData.createCell(5).setCellValue(product.getField(Product.BRAND));
+                rowData.createCell(6).setCellValue(product.getField(Product.CATEGORY));
             }
 
             CellReference topLeft = new CellReference(sheet.getRow(0).getCell(0));
-            CellReference bottomRight = new CellReference(sheet.getRow(products.size()).getCell(5));
+            CellReference bottomRight = new CellReference(sheet.getRow(products.size()).getCell(6));
             AreaReference tableArea = wb.getCreationHelper().createAreaReference(topLeft, bottomRight);
             XSSFTable table = sheet.createTable(tableArea);
             table.setDisplayName("Table1");
