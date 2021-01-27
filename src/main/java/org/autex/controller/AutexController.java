@@ -7,6 +7,7 @@ import javafx.scene.control.Label;
 import javafx.stage.FileChooser;
 import org.autex.model.Product;
 import org.autex.supplier.AutexSupplierTask;
+import org.autex.util.Configuration;
 
 import java.io.*;
 
@@ -18,6 +19,11 @@ public class AutexController implements SupplierController {
 
     public AutexController() {
         fileChooser = new FileChooser();
+        File initDir = new File(Configuration.getStringProperty("defaultPath"));
+        if (initDir.exists()) {
+            fileChooser.setInitialDirectory(initDir);
+        }
+
         fileChooser.setTitle("Válassz fájlt");
         fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Excel files", "*.xls", "*.xlsx"), new FileChooser.ExtensionFilter("All Files", "*.*"));
     }
