@@ -19,8 +19,8 @@ public class Product {
     public static final String WEIGHT = "weight";
 
     private final Map<String, StringProperty> stringData = new HashMap<>();
-    private final Map<String, ObjectProperty<Integer>> integerData = new HashMap<>();
-    private final Map<String, ObjectProperty<Float>> floatData = new HashMap<>();
+    private final Map<String, IntegerProperty> integerData = new HashMap<>();
+    private final Map<String, FloatProperty> floatData = new HashMap<>();
 
     private final ObjectProperty<Long> idField = new SimpleObjectProperty<>();
     private String skuField;
@@ -47,7 +47,7 @@ public class Product {
         if (integerData.containsKey(name)) {
             integerData.get(name).set(value);
         } else {
-            integerData.put(name, new SimpleObjectProperty<>(value));
+            integerData.put(name, new SimpleIntegerProperty(value));
         }
     }
 
@@ -55,7 +55,7 @@ public class Product {
         if (floatData.containsKey(name)) {
             floatData.get(name).set(value);
         } else {
-            floatData.put(name, new SimpleObjectProperty<>(value));
+            floatData.put(name, new SimpleFloatProperty(value));
         }
     }
 
@@ -72,13 +72,13 @@ public class Product {
             return type.cast(stringData.get(name).get());
         } else if (type.equals(Float.class)) {
             if (!floatData.containsKey(name)) {
-                floatData.put(name, new SimpleObjectProperty<>());
+                floatData.put(name, new SimpleFloatProperty());
             }
 
             return type.cast(floatData.get(name).get());
         } else {
             if (!integerData.containsKey(name)) {
-                integerData.put(name, new SimpleObjectProperty<>());
+                integerData.put(name, new SimpleIntegerProperty());
             }
 
             return type.cast(integerData.get(name).get());
@@ -109,8 +109,8 @@ public class Product {
         return stringData.get(PRICE);
     }
 
-    public ObjectProperty<Float> stockQuantityProperty() {
-        return floatData.get(STOCK_QUANTITY);
+    public StringProperty stockQuantityProperty() {
+        return stringData.get(STOCK_QUANTITY);
     }
 
     public StringProperty weightProperty() {
@@ -167,14 +167,14 @@ public class Product {
                 } else {
                     jsonObject.put(selectedField, stringData.get(selectedField).get());
                 }
-            } else if (floatData.containsKey(selectedField) && floatData.get(selectedField).get() != null) {
+            } else if (floatData.containsKey(selectedField) && floatData.get(selectedField) != null) {
                 if (STOCK_QUANTITY.equals(selectedField)) {
                     jsonObject.put(STOCK_QUANTITY, floatData.get(STOCK_QUANTITY).get());
                     jsonObject.put("manage_stock", true);
                 } else {
                     jsonObject.put(selectedField, floatData.get(selectedField).get());
                 }
-            } else if (integerData.containsKey(selectedField) && integerData.get(selectedField).get() != null) {
+            } else if (integerData.containsKey(selectedField) && integerData.get(selectedField) != null) {
                 jsonObject.put(selectedField, integerData.get(selectedField).get());
             }
         }

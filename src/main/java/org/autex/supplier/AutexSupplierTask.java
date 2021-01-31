@@ -4,8 +4,12 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.FractionFormat;
 import org.autex.exception.GeneralException;
 import org.autex.model.Product;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -16,6 +20,7 @@ import java.util.Map;
 import java.util.Optional;
 
 public class AutexSupplierTask extends SupplierTask {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AutexSupplierTask.class);
     private final File cobraFile;
 
     private static final String COL_NAME_SKU = "Cikkszám";
@@ -23,10 +28,11 @@ public class AutexSupplierTask extends SupplierTask {
     private static final String COL_NAME_STOCK_QUANTITY = "Készlet";
     private static final String COL_NAME_PRICE = "Nyilv.Ár";
 
-    HSSFDataFormatter df = new HSSFDataFormatter(new Locale("hu"));
+    HSSFDataFormatter df = new HSSFDataFormatter(new Locale("en"));
     private final Map<String, Integer> columnLocations;
 
     public AutexSupplierTask(File cobraFile) {
+
         this.cobraFile = cobraFile;
 
         columnLocations = new HashMap<>();
@@ -50,13 +56,30 @@ public class AutexSupplierTask extends SupplierTask {
                 HSSFRow row = sheet.getRow(rowIndex);
 
                 HSSFCell skuCell = row.getCell(columnLocations.get(COL_NAME_SKU));
-                if (skuCell == null) {
+                String sku = df.formatCellValue(skuCell);
+                if (skuCell == null || sku.isEmpty()) {
                     break;
                 }
 
-                Product product = new Product(df.formatCellValue(skuCell));
+                Product product = new Product(sku);
                 Optional.ofNullable(row.getCell(columnLocations.get(COL_NAME_NAME))).ifPresent(cell -> product.setField(Product.NAME, df.formatCellValue(cell)));
-                Optional.ofNullable(row.getCell(columnLocations.get(COL_NAME_STOCK_QUANTITY))).ifPresent(cell -> product.setField(Product.STOCK_QUANTITY, Float.parseFloat(df.formatCellValue(cell).replace(",", "."))));
+                int finalRowIndex = rowIndex;
+                Optional.ofNullable(row.getCell(columnLocations.get(COL_NAME_STOCK_QUANTITY))).ifPresent(cell -> {
+                    double cellRawValue = cell.getNumericCellValue();
+                    String cellValue;
+                    if(cellRawValue == (int) cellRawValue) {
+                        cellValue = Long.toString((long) cellRawValue);
+                    } else {
+                        cellValue = Double.toString(cellRawValue);
+                    }
+
+                    try {
+                        product.setField(Product.STOCK_QUANTITY, cellValue);
+                    } catch (Exception e) {
+                        LOGGER.info("Error in row {}", finalRowIndex);
+                    }
+                });
+
                 Optional.ofNullable(row.getCell(columnLocations.get(COL_NAME_PRICE))).ifPresent(cell -> product.setField(Product.PRICE, df.formatCellValue(cell)));
                 products.add(product);
             }
