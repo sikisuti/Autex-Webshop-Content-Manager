@@ -65,11 +65,11 @@ public class UploadTask extends RemoteTask {
             HttpResponse response = httpClient.execute(newProductRequest);
             HttpEntity entity = response.getEntity();
             int statusCode = response.getStatusLine().getStatusCode();
-            EntityUtils.consumeQuietly(entity);
             if (statusCode > 399) {
-                throw new CalloutException(statusCode, response.getStatusLine().getReasonPhrase());
+                throw new CalloutException(statusCode, response.getStatusLine().getReasonPhrase(), EntityUtils.toString(entity));
             }
 
+            EntityUtils.consumeQuietly(entity);
             products.forEach(p -> p.setStatus(Product.Status.EXISTS));
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);

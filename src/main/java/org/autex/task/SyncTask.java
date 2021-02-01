@@ -43,8 +43,7 @@ public class SyncTask extends RemoteTask {
             HttpEntity entity = response.getEntity();
             int statusCode = response.getStatusLine().getStatusCode();
             if (statusCode > 399) {
-                EntityUtils.consumeQuietly(entity);
-                throw new CalloutException(statusCode, response.getStatusLine().getReasonPhrase());
+                throw new CalloutException(statusCode, response.getStatusLine().getReasonPhrase(), EntityUtils.toString(entity));
             }
 
             products.forEach(p -> {

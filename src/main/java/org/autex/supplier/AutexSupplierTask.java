@@ -14,6 +14,7 @@ import org.w3c.dom.Document;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -63,28 +64,24 @@ public class AutexSupplierTask extends SupplierTask {
 
                 Product product = new Product(sku);
                 Optional.ofNullable(row.getCell(columnLocations.get(COL_NAME_NAME))).ifPresent(cell -> product.setField(Product.NAME, df.formatCellValue(cell)));
-                int finalRowIndex = rowIndex;
-                Optional.ofNullable(row.getCell(columnLocations.get(COL_NAME_STOCK_QUANTITY))).ifPresent(cell -> {
-                    double cellRawValue = cell.getNumericCellValue();
-                    String cellValue;
-                    if(cellRawValue == (int) cellRawValue) {
-                        cellValue = Long.toString((long) cellRawValue);
-                    } else {
-                        cellValue = Double.toString(cellRawValue);
-                    }
+                Optional.ofNullable(row.getCell(columnLocations.get(COL_NAME_STOCK_QUANTITY))).ifPresent(cell -> product.setField(Product.STOCK_QUANTITY, formatNumberCell(cell)));
 
-                    try {
-                        product.setField(Product.STOCK_QUANTITY, cellValue);
-                    } catch (Exception e) {
-                        LOGGER.info("Error in row {}", finalRowIndex);
-                    }
-                });
-
-                Optional.ofNullable(row.getCell(columnLocations.get(COL_NAME_PRICE))).ifPresent(cell -> product.setField(Product.PRICE, df.formatCellValue(cell)));
+                Optional.ofNullable(row.getCell(columnLocations.get(COL_NAME_PRICE))).ifPresent(cell -> product.setField(Product.PRICE, formatNumberCell(cell)));
                 products.add(product);
             }
 
             return products;
+        }
+    }
+
+    private String formatNumberCell(HSSFCell cell) {
+        double cellRawValue = cell.getNumericCellValue();
+//        NumberFormat numberFormat = NumberFormat.getNumberInstance();
+//        numberFormat.setGroupingUsed(false);
+        if(cellRawValue == (int) cellRawValue) {
+            return Integer.toString((int) cellRawValue);
+        } else {
+            return Double.toString(cellRawValue);
         }
     }
 

@@ -164,16 +164,20 @@ public class Product {
             if (stringData.containsKey(selectedField) && stringData.get(selectedField).get() != null && !stringData.get(selectedField).get().isBlank()) {
                 if (BRAND.equals(selectedField)) {
                     addBrand(objectMapper, metaData, gwsMetasValue);
+                } else if (STOCK_QUANTITY.equals(selectedField)) {
+                    String value = stringData.get(STOCK_QUANTITY).get();
+                    if (value.contains(".")) {
+                        jsonObject.put(STOCK_QUANTITY, Float.parseFloat(value));
+                    } else {
+                        jsonObject.put(STOCK_QUANTITY, Integer.parseInt(value));
+                    }
+
+                    jsonObject.put("manage_stock", true);
                 } else {
                     jsonObject.put(selectedField, stringData.get(selectedField).get());
                 }
             } else if (floatData.containsKey(selectedField) && floatData.get(selectedField) != null) {
-                if (STOCK_QUANTITY.equals(selectedField)) {
-                    jsonObject.put(STOCK_QUANTITY, floatData.get(STOCK_QUANTITY).get());
-                    jsonObject.put("manage_stock", true);
-                } else {
-                    jsonObject.put(selectedField, floatData.get(selectedField).get());
-                }
+                jsonObject.put(selectedField, floatData.get(selectedField).get());
             } else if (integerData.containsKey(selectedField) && integerData.get(selectedField) != null) {
                 jsonObject.put(selectedField, integerData.get(selectedField).get());
             }

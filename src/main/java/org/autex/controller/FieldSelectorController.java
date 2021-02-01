@@ -5,13 +5,18 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.layout.VBox;
+import org.autex.model.Product;
 import org.autex.util.Serializer;
 import org.autex.util.Translator;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class FieldSelectorController {
+    List<String> enabledByDefault = Arrays.asList(Product.NAME, Product.PRICE, Product.STOCK_QUANTITY);
+
     @FXML private VBox selectorList;
     private Map<String, BooleanProperty> selectedFields = new HashMap<>();
 
@@ -23,6 +28,7 @@ public class FieldSelectorController {
             chk.setId(field);
             isSelected.bindBidirectional(chk.selectedProperty());
             selectorList.getChildren().add(chk);
+            chk.selectedProperty().set(enabledByDefault.contains(field));
         }
     }
 

@@ -56,6 +56,7 @@ public class ResultViewController {
     @FXML
     private void save() throws IOException {
         FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Excel files", "*.xlsx"));
         File file = fileChooser.showSaveDialog(tvResults.getScene().getWindow());
         if (file != null) {
             saveAsExcel(file);
@@ -76,7 +77,7 @@ public class ResultViewController {
 
         FieldSelectorDialog dialog = new FieldSelectorDialog(tvResults.getItems().get(0).getAllFieldNames());
         Optional<Set<String>> selectedFields = dialog.showAndWait();
-        selectedFields.ifPresent(strings -> startService(new UploadService(tvResults.getItems(), getAuthHeader(), strings)));
+        selectedFields.ifPresent(fields -> startService(new UploadService(tvResults.getItems(), getAuthHeader(), fields)));
     }
 
     private void startService(RemoteService service) {
@@ -118,7 +119,7 @@ public class ResultViewController {
                 rowData.createCell(0).setCellValue(product.getSku());
                 rowData.createCell(1).setCellValue(product.getField(Product.NAME));
                 rowData.createCell(2).setCellValue(product.getField(Product.PRICE));
-                rowData.createCell(3).setCellValue(product.getField(Product.STOCK_QUANTITY, Integer.class));
+                rowData.createCell(3).setCellValue(product.getField(Product.STOCK_QUANTITY));
                 rowData.createCell(4).setCellValue(product.getField(Product.WEIGHT));
                 rowData.createCell(5).setCellValue(product.getField(Product.BRAND));
                 rowData.createCell(6).setCellValue(product.getField(Product.CATEGORY));
