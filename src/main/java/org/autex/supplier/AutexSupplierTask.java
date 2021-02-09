@@ -64,7 +64,7 @@ public class AutexSupplierTask extends SupplierTask {
 
                 Product product = new Product(sku);
                 Optional.ofNullable(row.getCell(columnLocations.get(COL_NAME_NAME))).ifPresent(cell -> product.setField(Product.NAME, df.formatCellValue(cell)));
-                Optional.ofNullable(row.getCell(columnLocations.get(COL_NAME_STOCK_QUANTITY))).ifPresent(cell -> product.setField(Product.STOCK_QUANTITY, formatNumberCell(cell)));
+                Optional.ofNullable(row.getCell(columnLocations.get(COL_NAME_STOCK_QUANTITY))).ifPresent(cell -> product.setField(Product.STOCK_QUANTITY, cell.getNumericCellValue()));
 
                 Optional.ofNullable(row.getCell(columnLocations.get(COL_NAME_PRICE))).ifPresent(cell -> product.setField(Product.PRICE, formatNumberCell(cell)));
                 products.add(product);

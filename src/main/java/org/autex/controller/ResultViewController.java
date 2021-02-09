@@ -21,6 +21,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTable;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.text.DecimalFormat;
 import java.util.Optional;
 import java.util.Set;
 
@@ -29,8 +30,28 @@ public class ResultViewController {
     @FXML ProgressIndicator progressIndicator;
     @FXML Label lbProgressMessage;
     @FXML TableView<Product> tvResults;
+    @FXML TableColumn<Product, Double> colQuantity;
     String supplierName;
     private String authHeader;
+
+    @FXML
+    private void initialize() {
+        DecimalFormat df = new DecimalFormat();
+        df.setMaximumFractionDigits(3);
+
+        colQuantity.setCellFactory(tc -> new TableCell<>() {
+            @Override
+            protected void updateItem(Double stockQuantity, boolean isEmpty) {
+                super.updateItem(stockQuantity, isEmpty);
+                if (isEmpty || stockQuantity == null) {
+                    setText(null);
+                    setGraphic(null);
+                } else {
+                    setText(df.format(stockQuantity));
+                }
+            }
+        });
+    }
 
     public void convert(Task<ObservableList<Product>> task) {
         busyVeil.visibleProperty().bind(task.runningProperty());
@@ -119,7 +140,7 @@ public class ResultViewController {
                 rowData.createCell(0).setCellValue(product.getSku());
                 rowData.createCell(1).setCellValue(product.getField(Product.NAME));
                 rowData.createCell(2).setCellValue(product.getField(Product.PRICE));
-                rowData.createCell(3).setCellValue(product.getField(Product.STOCK_QUANTITY));
+                rowData.createCell(3).setCellValue(product.getField(Product.STOCK_QUANTITY, Double.class));
                 rowData.createCell(4).setCellValue(product.getField(Product.WEIGHT));
                 rowData.createCell(5).setCellValue(product.getField(Product.BRAND));
                 rowData.createCell(6).setCellValue(product.getField(Product.CATEGORY));
