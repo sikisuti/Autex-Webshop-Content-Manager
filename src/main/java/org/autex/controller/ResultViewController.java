@@ -109,7 +109,7 @@ public class ResultViewController {
         new Thread(service).start();
     }
 
-    private String getAuthHeader() {
+    public String getAuthHeader() {
         if (authHeader == null) {
             String key = Configuration.getStringProperty("key");
             String secretKey = Configuration.getStringProperty("secretKey");
