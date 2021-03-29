@@ -40,7 +40,7 @@ public class FileSupplierTask extends SupplierTask {
 
                 XSSFCell skuCell = row.getCell(0);
                 if (skuCell != null) {
-                    Product product = new Product(df.formatCellValue(skuCell));
+                    Product product = new Product(df.formatCellValue(skuCell).trim());
                     if (processedItems.contains(product.getSku())) {
                         throw new DuplicateSkuException(product.getSku());
                     } else {

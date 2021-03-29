@@ -57,7 +57,7 @@ public class AutexSupplierTask extends SupplierTask {
                 HSSFRow row = sheet.getRow(rowIndex);
 
                 HSSFCell skuCell = row.getCell(columnLocations.get(COL_NAME_SKU));
-                String sku = df.formatCellValue(skuCell);
+                String sku = df.formatCellValue(skuCell).trim().replaceAll("\\s+", " ");
                 if (skuCell == null || sku.isEmpty()) {
                     break;
                 }

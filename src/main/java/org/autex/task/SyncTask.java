@@ -86,11 +86,11 @@ public class SyncTask extends RemoteTask {
 
         while (jsonParser.nextToken() != JsonToken.END_OBJECT || level > 0) {
             String fieldName = jsonParser.getCurrentName();
-            if ("id".equals(fieldName)) {
+            if ("id".equals(fieldName) && level == 0) {
                 id = jsonParser.nextLongValue(0);
-            } else if ("weight".equals(fieldName)) {
+            } else if ("weight".equals(fieldName) && level == 0) {
                 weight = jsonParser.nextTextValue();
-            } else if ("sku".equals(fieldName)) {
+            } else if ("sku".equals(fieldName) && level == 0) {
                 sku = jsonParser.nextTextValue();
             } else if (jsonParser.currentToken() == JsonToken.START_OBJECT) {
                 level++;
@@ -104,7 +104,7 @@ public class SyncTask extends RemoteTask {
 
     private void adjustProduct(List<Product> products, String weight, Long id, String sku) {
         if (sku != null && !sku.isEmpty()) {
-            Optional<Product> product = products.stream().filter(p -> sku.equals(p.getSku())).findFirst();
+            Optional<Product> product = products.stream().filter(p -> sku.trim().equals(p.getSku().trim())).findFirst();
             if (product.isPresent()) {
                 product.get().setStatus(Product.Status.EXISTS);
                 product.get().getRemoteInstance().setField(WEIGHT, weight);
