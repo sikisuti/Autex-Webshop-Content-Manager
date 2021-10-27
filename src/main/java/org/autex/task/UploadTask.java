@@ -63,7 +63,7 @@ public class UploadTask extends RemoteTask {
                 requestObject.set("update", updateArray);
             }
 
-            LOGGER.info(requestObject.toPrettyString());
+            LOGGER.info(requestObject.toString());
 
             StringEntity requestEntity = new StringEntity(objectMapper.writeValueAsString(requestObject), ContentType.APPLICATION_JSON);
             newProductRequest.setEntity(requestEntity);

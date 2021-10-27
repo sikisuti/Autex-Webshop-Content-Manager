@@ -94,7 +94,7 @@ public class ComplexSupplierTask extends SupplierTask {
                         product.setField(Product.NAME, id);
                         Optional.ofNullable(rowFromMasterData.getCell(4)).ifPresent(cell -> product.setField(Product.PRICE, df.formatCellValue(cell)));
                         Optional.ofNullable(row.getCell(1)).ifPresent(cell -> product.setField(Product.BRAND, df.formatCellValue(cell)));
-                        Optional.ofNullable(row.getCell(3)).ifPresent(cell -> product.setField(Product.STOCK_QUANTITY, Integer.parseInt(df.formatCellValue(cell))));
+                        Optional.ofNullable(row.getCell(3)).ifPresent(cell -> product.setField(Product.STOCK_QUANTITY, Double.parseDouble(df.formatCellValue(cell))));
 
                         try {
                             Optional.ofNullable(rowFromMasterData.getCell(5)).ifPresent(cell -> product.setField(Product.CATEGORY, parseCategories(df.formatCellValue(cell))));
