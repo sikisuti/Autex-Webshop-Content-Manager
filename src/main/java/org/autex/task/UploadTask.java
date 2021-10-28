@@ -11,7 +11,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.message.BasicHeader;
 import org.apache.http.util.EntityUtils;
 import org.autex.exception.CalloutException;
 import org.autex.model.Product;
@@ -20,7 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URI;
-import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Set;
 
@@ -63,6 +61,7 @@ public class UploadTask extends RemoteTask {
                 requestObject.set("update", updateArray);
             }
 
+            LOGGER.info("Request: {} {}", newProductRequest.getMethod(), url);
             LOGGER.info(requestObject.toString());
 
             StringEntity requestEntity = new StringEntity(objectMapper.writeValueAsString(requestObject), ContentType.APPLICATION_JSON);
@@ -74,6 +73,8 @@ public class UploadTask extends RemoteTask {
                 throw new CalloutException(statusCode, response.getStatusLine().getReasonPhrase(), EntityUtils.toString(entity));
             }
 
+            LOGGER.info("Response: {} {}", statusCode, response.getStatusLine().getReasonPhrase());
+            LOGGER.info(EntityUtils.toString(entity));
             EntityUtils.consumeQuietly(entity);
             products.forEach(p -> p.setStatus(Product.Status.EXISTS));
         } catch (Exception e) {

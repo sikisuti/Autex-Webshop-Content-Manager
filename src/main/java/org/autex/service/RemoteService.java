@@ -36,8 +36,8 @@ public abstract class RemoteService extends Task<ObservableList<Product>> {
                 .setConnectionManager(connectionManager)
                 .setDefaultRequestConfig(RequestConfig.custom()
                         .setConnectTimeout(10000)
-                        .setSocketTimeout(50000)
-                        .setConnectionRequestTimeout(50000)
+                        .setSocketTimeout(120000)
+                        .setConnectionRequestTimeout(120000)
                         .build())
                 .build()) {
             service = Executors.newFixedThreadPool(allowedThreads);
