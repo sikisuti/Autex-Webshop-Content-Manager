@@ -1,0 +1,16 @@
+=CONCAT(D2;
+  SUBSTITUTE(
+    TRIM(
+      LEFT(
+        B2;
+        IF(
+          ISNUMBER(FIND("(";B2));
+          FIND("(";B2)-1;
+          LEN(B2)
+        )
+      )
+    );
+    " ";
+    "-"
+  )
+)
