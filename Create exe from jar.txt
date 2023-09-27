@@ -1,0 +1,7 @@
+https://www.youtube.com/watch?v=IoPXzopsmpE
+https://www.youtube.com/watch?v=51iMSVUOQNM&t=0s
+https://www.youtube.com/watch?v=k6m2a1OtfZ4&t=0s
+
+1. create executable jar
+2. create exe using launch4j
+3. create installer using Inno Setup
