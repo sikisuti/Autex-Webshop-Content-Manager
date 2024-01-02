@@ -1,5 +1,6 @@
 package org.autex.controller;
 
+import java.io.IOException;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -8,16 +9,17 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.autex.App;
-
-import java.io.IOException;
+import org.autex.util.Configuration;
 
 public class MainViewController {
     @FXML private BorderPane rootPane;
     @FXML private ComboBox<SupplyerDTO> cmbSupplierPicker;
+    @FXML private Label lblMissingCredentials;
 
     @FXML
     public void initialize() throws IOException {
@@ -29,6 +31,7 @@ public class MainViewController {
                 loadFXML("Complex")
         );
         cmbSupplierPicker.setItems(suppliers);
+        lblMissingCredentials.setVisible(Configuration.isCredentialsMissing());
     }
 
     private SupplyerDTO loadFXML(String name) throws IOException {
@@ -67,7 +70,8 @@ public class MainViewController {
         stage.setScene(new Scene(loader.load()));
         stage.initOwner(rootPane.getScene().getWindow());
         stage.initModality(Modality.APPLICATION_MODAL);
-        stage.show();
+        stage.showAndWait();
+        lblMissingCredentials.setVisible(Configuration.isCredentialsMissing());
     }
 
     private static class SupplyerDTO {

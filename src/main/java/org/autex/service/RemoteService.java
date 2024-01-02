@@ -1,18 +1,18 @@
 package org.autex.service;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
+import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.autex.util.Configuration;
 import org.autex.model.Product;
+import org.autex.util.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public abstract class RemoteService extends Task<ObservableList<Product>> {
     private static final Logger LOGGER = LoggerFactory.getLogger(RemoteService.class);
@@ -38,6 +38,7 @@ public abstract class RemoteService extends Task<ObservableList<Product>> {
                         .setConnectTimeout(10000)
                         .setSocketTimeout(120000)
                         .setConnectionRequestTimeout(120000)
+                        .setCookieSpec(CookieSpecs.STANDARD)
                         .build())
                 .build()) {
             service = Executors.newFixedThreadPool(allowedThreads);

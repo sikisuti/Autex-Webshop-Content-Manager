@@ -1,5 +1,8 @@
 package org.autex.controller;
 
+import static java.util.Optional.ofNullable;
+
+import java.io.*;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
@@ -7,11 +10,9 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.stage.FileChooser;
-import org.autex.util.Configuration;
 import org.autex.model.Product;
 import org.autex.supplier.ComplexSupplierTask;
-
-import java.io.*;
+import org.autex.util.Configuration;
 
 public class ComplexController implements SupplierController {
     @FXML public Label lbAllItemsPath;
@@ -22,15 +23,19 @@ public class ComplexController implements SupplierController {
     File masterDataFile;
     File stockFile;
 
-    public ComplexController() {
-        fileChooser = new FileChooser();
-        File initDir = new File(Configuration.getStringProperty("defaultPath"));
-        if (initDir.exists()) {
-            fileChooser.setInitialDirectory(initDir);
-        }
+  public ComplexController() {
+    fileChooser = new FileChooser();
+    ofNullable(Configuration.getStringProperty("defaultPath"))
+        .map(File::new)
+        .filter(File::exists)
+        .ifPresent(initDir -> fileChooser.setInitialDirectory(initDir));
 
-        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Excel files", "*.xls", "*.xlsx"), new FileChooser.ExtensionFilter("All Files", "*.*"));
-    }
+    fileChooser
+        .getExtensionFilters()
+        .addAll(
+            new FileChooser.ExtensionFilter("Excel files", "*.xls", "*.xlsx"),
+            new FileChooser.ExtensionFilter("All Files", "*.*"));
+  }
 
     public void selectFile(ActionEvent e) {
         if (((Node) e.getSource()).getId().equals("btnAllItems")) {

@@ -1,15 +1,16 @@
 package org.autex.controller;
 
+import static java.util.Optional.ofNullable;
+
+import java.io.File;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.stage.FileChooser;
-import org.autex.util.Configuration;
 import org.autex.model.Product;
 import org.autex.supplier.FileSupplierTask;
-
-import java.io.File;
+import org.autex.util.Configuration;
 
 public class FileController implements SupplierController {
     @FXML public Label lbSourcePath;
@@ -18,15 +19,19 @@ public class FileController implements SupplierController {
 
     File sourceFile;
 
-    public FileController() {
-        fileChooser = new FileChooser();
-        File initDir = new File(Configuration.getStringProperty("defaultPath"));
-        if (initDir.exists()) {
-            fileChooser.setInitialDirectory(initDir);
-        }
+  public FileController() {
+    fileChooser = new FileChooser();
+    ofNullable(Configuration.getStringProperty("defaultPath"))
+        .map(File::new)
+        .filter(File::exists)
+        .ifPresent(initDir -> fileChooser.setInitialDirectory(initDir));
 
-        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Excel files", "*.xlsx"), new FileChooser.ExtensionFilter("All Files", "*.*"));
-    }
+    fileChooser
+        .getExtensionFilters()
+        .addAll(
+            new FileChooser.ExtensionFilter("Excel files", "*.xlsx"),
+            new FileChooser.ExtensionFilter("All Files", "*.*"));
+  }
 
     public void selectFile() {
         fileChooser.setTitle("Válassz fájlt");

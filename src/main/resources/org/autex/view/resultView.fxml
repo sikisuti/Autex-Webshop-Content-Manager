@@ -1,10 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.control.cell.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
-
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 <StackPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.autex.controller.ResultViewController">
     <VBox>
         <TableView fx:id="tvResults" VBox.vgrow="ALWAYS">
@@ -58,7 +65,7 @@
         </TableView>
         <HBox style="-fx-padding: 10 10 10 10;">
             <Button onAction="#save" text="mentés" />
-            <Button onAction="#sync" text="szinkronizálás" />
+<!--            <Button onAction="#sync" text="szinkronizálás" />-->
             <Pane HBox.hgrow="ALWAYS" />
             <Button onAction="#upload" text="feltöltés a webshop-ba" />
         </HBox>
