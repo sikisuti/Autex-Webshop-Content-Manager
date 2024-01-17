@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.GridPane?>
+<GridPane style="-fx-padding: 10;" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="org.autex.controller.RetrieveAllProductsController">
+    <Label GridPane.columnIndex="1" fx:id="lbAllItemsPath">Összes webshop termék lekérdezése</Label>
+</GridPane>

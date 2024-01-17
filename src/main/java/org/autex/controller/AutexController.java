@@ -12,13 +12,14 @@ import org.autex.model.Product;
 import org.autex.supplier.AutexSupplierTask;
 import org.autex.util.Configuration;
 
-public class AutexController implements SupplierController {
-    @FXML private Label lbSourcePath;
+public class AutexController extends SupplierController {
+  @FXML private Label lbSourcePath;
 
-    FileChooser fileChooser;
-    File cobraFile;
+  FileChooser fileChooser;
+  File cobraFile;
 
-  public AutexController() {
+  @FXML
+  public void initialize() {
     fileChooser = new FileChooser();
     ofNullable(Configuration.getStringProperty("defaultPath"))
         .map(File::new)
@@ -31,15 +32,22 @@ public class AutexController implements SupplierController {
         .addAll(
             new FileChooser.ExtensionFilter("Excel files", "*.xls", "*.xlsx"),
             new FileChooser.ExtensionFilter("All Files", "*.*"));
+
+    isReadyProperty.bind(lbSourcePath.textProperty().isNotEmpty());
   }
 
-    public void selectFile() {
-        cobraFile = fileChooser.showOpenDialog(lbSourcePath.getScene().getWindow());
-        lbSourcePath.setText(cobraFile.getAbsolutePath());
-    }
+  public void selectFile() {
+    cobraFile = fileChooser.showOpenDialog(lbSourcePath.getScene().getWindow());
+    lbSourcePath.setText(ofNullable(cobraFile).map(File::getAbsolutePath).orElse(null));
+  }
 
-    @Override
-    public Task<ObservableList<Product>> getConversionTask() {
-        return new AutexSupplierTask(cobraFile);
-    }
+  @Override
+  public String getDescription() {
+    return "Feltöltés Cobra fájlból";
+  }
+
+  @Override
+  public Task<ObservableList<Product>> getConversionTask() {
+    return new AutexSupplierTask(cobraFile);
+  }
 }

@@ -1,6 +1,7 @@
 package org.autex.controller;
 
 import static java.util.Optional.ofNullable;
+import static javafx.beans.binding.Bindings.and;
 
 import java.io.*;
 import javafx.collections.ObservableList;
@@ -14,16 +15,17 @@ import org.autex.model.Product;
 import org.autex.supplier.ComplexSupplierTask;
 import org.autex.util.Configuration;
 
-public class ComplexController implements SupplierController {
-    @FXML public Label lbAllItemsPath;
-    @FXML public Label lbInventoryPath;
+public class ComplexController extends SupplierController {
+  @FXML public Label lbAllItemsPath;
+  @FXML public Label lbInventoryPath;
 
-    FileChooser fileChooser;
+  FileChooser fileChooser;
 
-    File masterDataFile;
-    File stockFile;
+  File masterDataFile;
+  File stockFile;
 
-  public ComplexController() {
+  @FXML
+  public void initialize() {
     fileChooser = new FileChooser();
     ofNullable(Configuration.getStringProperty("defaultPath"))
         .map(File::new)
@@ -35,22 +37,32 @@ public class ComplexController implements SupplierController {
         .addAll(
             new FileChooser.ExtensionFilter("Excel files", "*.xls", "*.xlsx"),
             new FileChooser.ExtensionFilter("All Files", "*.*"));
+
+    isReadyProperty.bind(
+        and(
+            lbAllItemsPath.textProperty().isNotEmpty(),
+            lbInventoryPath.textProperty().isNotEmpty()));
   }
 
-    public void selectFile(ActionEvent e) {
-        if (((Node) e.getSource()).getId().equals("btnAllItems")) {
-            fileChooser.setTitle("Válassz cikktörzs fájlt");
-            masterDataFile = fileChooser.showOpenDialog(lbAllItemsPath.getScene().getWindow());
-            lbAllItemsPath.setText(masterDataFile.getAbsolutePath());
-        } else {
-            fileChooser.setTitle("Válassz készlet fájlt");
-            stockFile = fileChooser.showOpenDialog(lbAllItemsPath.getScene().getWindow());
-            lbInventoryPath.setText(stockFile.getAbsolutePath());
-        }
+  public void selectFile(ActionEvent e) {
+    if (((Node) e.getSource()).getId().equals("btnAllItems")) {
+      fileChooser.setTitle("Válassz cikktörzs fájlt");
+      masterDataFile = fileChooser.showOpenDialog(lbAllItemsPath.getScene().getWindow());
+      lbAllItemsPath.setText(ofNullable(masterDataFile).map(File::getAbsolutePath).orElse(null));
+    } else {
+      fileChooser.setTitle("Válassz készlet fájlt");
+      stockFile = fileChooser.showOpenDialog(lbAllItemsPath.getScene().getWindow());
+      lbInventoryPath.setText(ofNullable(stockFile).map(File::getAbsolutePath).orElse(null));
     }
+  }
 
-    @Override
-    public Task<ObservableList<Product>> getConversionTask() {
-        return new ComplexSupplierTask(masterDataFile, stockFile);
-    }
+  @Override
+  public String getDescription() {
+    return "Feltöltés Complex fájlokból";
+  }
+
+  @Override
+  public Task<ObservableList<Product>> getConversionTask() {
+    return new ComplexSupplierTask(masterDataFile, stockFile);
+  }
 }

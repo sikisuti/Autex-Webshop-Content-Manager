@@ -12,14 +12,15 @@ import org.autex.model.Product;
 import org.autex.supplier.FileSupplierTask;
 import org.autex.util.Configuration;
 
-public class FileController implements SupplierController {
-    @FXML public Label lbSourcePath;
+public class FileController extends SupplierController {
+  @FXML public Label lbSourcePath;
 
-    FileChooser fileChooser;
+  FileChooser fileChooser;
 
-    File sourceFile;
+  File sourceFile;
 
-  public FileController() {
+  @FXML
+  public void initialize() {
     fileChooser = new FileChooser();
     ofNullable(Configuration.getStringProperty("defaultPath"))
         .map(File::new)
@@ -31,16 +32,23 @@ public class FileController implements SupplierController {
         .addAll(
             new FileChooser.ExtensionFilter("Excel files", "*.xlsx"),
             new FileChooser.ExtensionFilter("All Files", "*.*"));
+
+    isReadyProperty.bind(lbSourcePath.textProperty().isNotEmpty());
   }
 
-    public void selectFile() {
-        fileChooser.setTitle("Válassz fájlt");
-        sourceFile = fileChooser.showOpenDialog(lbSourcePath.getScene().getWindow());
-        lbSourcePath.setText(sourceFile.getAbsolutePath());
-    }
+  public void selectFile() {
+    fileChooser.setTitle("Válassz fájlt");
+    sourceFile = fileChooser.showOpenDialog(lbSourcePath.getScene().getWindow());
+    lbSourcePath.setText(ofNullable(sourceFile).map(File::getAbsolutePath).orElse(null));
+  }
 
-    @Override
-    public Task<ObservableList<Product>> getConversionTask() {
-        return new FileSupplierTask(sourceFile);
-    }
+  @Override
+  public String getDescription() {
+    return "Feltöltés korábban mentett fájlból";
+  }
+
+  @Override
+  public Task<ObservableList<Product>> getConversionTask() {
+    return new FileSupplierTask(sourceFile);
+  }
 }
